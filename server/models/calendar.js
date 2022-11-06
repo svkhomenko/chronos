@@ -28,6 +28,11 @@ module.exports = function initCalendar(sequelize) {
             type: DataTypes.STRING(6),
             defaultValue: "ffffff",
             allowNull: false
+        },
+        status: {
+            type: DataTypes.ENUM("main", "additional"),
+            allowNull: false,
+            defaultValue: "additional"
         }
     },
     {

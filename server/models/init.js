@@ -42,7 +42,7 @@ const UserCalendar = sequelize.models.user_calendar;
 const Event = sequelize.models.event;
 const UserEvent = sequelize.models.user_event;
 
-User.belongsToMany(Calendar, { 
+User.belongsToMany(Calendar, {
     through: UserCalendar,
     foreignKey: 'user_id',
     otherKey: 'calendar_id',
@@ -70,6 +70,7 @@ Event.belongsToMany(User, {
 
 const CalendarEventSettings = {
     foreignKey: {
+        name: 'calendar_id',
         allowNull: false
     },
     onDelete: 'CASCADE',
@@ -87,9 +88,9 @@ Event.belongsTo(Calendar, CalendarEventSettings);
 // });
 
 // Uncomment this and comment out the sync above if you don't want to recreate the database
-// sequelize.sync();
+sequelize.sync();
 
-sequelize.sync({ alter: true });
+// sequelize.sync({ alter: true });
 
 const db = {
     sequelize: sequelize

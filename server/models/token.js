@@ -8,15 +8,14 @@ module.exports = function initToken(sequelize) {
             allowNull: false,
             unique: true
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: Sequelize.NOW,
+        created_at: {
+            type: "TIMESTAMP",
+            defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         }
     },
     { 
-        timestamps: true,
-        updatedAt: false
+        timestamps: false
     });
 }
 

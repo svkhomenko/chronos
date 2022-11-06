@@ -1,0 +1,140 @@
+@import '../_vars.css';
+
+.label {
+    margin: 10px 0 5px;
+}
+
+.input_file {
+    display: none;
+}
+
+/* auth */
+
+.auth_link {
+    margin: 10px 0;
+}
+
+.auth_link a {
+    text-decoration: underline;
+    color: var(--dark-green-color);
+}
+
+.auth_link a:hover {
+    color: var(--green-color);
+}
+
+/* user_form */
+
+.user_form .input {
+    display: block;
+    width: 45vw;
+    padding: 7px 10px;
+}
+
+.user_form .status_select_contatiner {
+    margin: 15px 0;
+}
+
+/* status_select */
+
+.status_select_contatiner {
+    display: flex;
+    align-items: center;
+}
+
+.status_select {
+    display: inline-block;
+    width: 120px;
+    margin-left: 10px;
+}
+
+.status_select__control {
+    background-color: white !important;
+    border: 1px solid var(--black-color) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+.status_select__control--is-focused {
+    border: 2px solid var(--dark-green-color) !important;
+}
+
+.status_selecty__indicator {
+    color: var(--dark-green-color) !important;
+}
+
+.status_select__menu {
+    top: 33px !important;
+}
+
+.status_select__option--is-focused {
+    background-color: var(--light-green-color) !important;
+    color: var(--black-color) !important;
+}
+
+.status_select__option--is-selected {
+    background-color: var(--dark-green-color) !important;
+    color: white !important;
+}
+
+/* textarea */
+
+textarea {
+    display: block;
+    width: 45vw;
+    resize: vertical;
+    padding: 10px;
+    border: 1px solid var(--black-color);
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    font-family: inherit;
+}
+
+textarea.large {
+    min-height: 100px;
+}
+
+textarea.small {
+    min-height: 50px;
+}
+
+textarea::placeholder {
+    font-size: 14px;
+    color: var(--grey-color);
+}
+
+textarea:focus {
+    outline: none !important;
+    border: 2px solid var(--dark-green-color);
+}
+
+/* images */
+
+.post_images_outer.update {
+    position: relative;
+}
+
+.post_images_outer.update .delete_image {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    line-height: 10px;
+    background-color: white;
+}
+
+.post_images_outer.update .delete_image:hover {
+    color: var(--dark-green-color);
+}
+
+.file_upload_label {
+    display: block;
+    width: fit-content;
+    margin: 8px 0;
+}
+
+/* button submit */
+
+.button.submit {
+    margin-top: 10px;
+}
+

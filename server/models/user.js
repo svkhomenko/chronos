@@ -10,19 +10,19 @@ module.exports = function initUser(sequelize) {
             autoIncrement: true
         },
         login: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: true
         },
-        encryptedPassword: {
+        encrypted_password: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
                 notEmpty: true,
             }
         },
-        fullName: {
-            type: DataTypes.STRING,
+        full_name: {
+            type: DataTypes.STRING(50),
             allowNull: false
         },
         email: {
@@ -33,7 +33,7 @@ module.exports = function initUser(sequelize) {
                 isEmail: true
             }
         },
-        profilePicture: {
+        profile_picture: {
             type: DataTypes.VIRTUAL,
             get() {
                 let fileName = this.getDataValue("picturePath");
@@ -53,11 +53,11 @@ module.exports = function initUser(sequelize) {
                 return null;
             }
         },
-        picturePath: {
+        picture_path: {
             type: DataTypes.STRING
         },
         status: {
-            type: DataTypes.ENUM('pending', 'active'),
+            type: DataTypes.ENUM("pending", "active"),
             allowNull: false,
             defaultValue: "pending"
         }
@@ -70,8 +70,8 @@ module.exports = function initUser(sequelize) {
                     instance.status = "pending";
                 }
                 
-                let prevPath = instance._previousDataValues.picturePath;
-                if (instance._changed.has('picturePath') && prevPath) {
+                let prevPath = instance._previousDataValues.picture_path;
+                if (instance._changed.has("picture_path") && prevPath) {
                     const pictureFilePath = path.resolve("uploads", prevPath);
                     if (fs.existsSync(pictureFilePath)) {
                         await fs.promises.unlink(pictureFilePath);
@@ -79,8 +79,8 @@ module.exports = function initUser(sequelize) {
                 }
             },
             beforeDestroy: async function (instance) {
-                if (instance.picturePath) {
-                    const pictureFilePath = path.resolve("uploads", instance.picturePath);
+                if (instance.picture_path) {
+                    const pictureFilePath = path.resolve("uploads", instance.picture_path);
                     if (fs.existsSync(pictureFilePath)) {
                         await fs.promises.unlink(pictureFilePath);
                     }

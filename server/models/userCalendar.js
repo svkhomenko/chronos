@@ -8,8 +8,8 @@ module.exports = function initUserCalendar(sequelize) {
             primaryKey: true,
             allowNull: false,
             references: {
-                model: 'User',
-                key: 'id'
+                model: "User",
+                key: "id"
             }
         },
         calendar_id: {
@@ -17,10 +17,15 @@ module.exports = function initUserCalendar(sequelize) {
             primaryKey: true,
             allowNull: false,
             references: {
-                model: 'Calendar',
-                key: 'id'
+                model: "Calendar",
+                key: "id"
             }
         },
+        user_role: {
+            type: DataTypes.ENUM("admin", "user"),
+            allowNull: false,
+            defaultValue: "user"
+        }
     },
     { 
         timestamps: false

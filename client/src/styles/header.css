@@ -1,0 +1,58 @@
+@import './_vars.css';
+
+@import './elements/user_icon.css';
+
+header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: -6vw;
+    margin-right: -6vw;
+    padding: 20px 6vw;
+    background-color: var(--off-white-color);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 40px;
+}
+
+header h1 a {
+    color: var(--dark-green-color);
+}
+
+header h1 a:hover {
+    color: var(--green-color);
+}
+
+/* search */
+
+header .menu_bar {
+    display: flex;
+    justify-content: space-between;
+    width: 30%;
+    font-size: 16px;
+    color: var(--dark-green-color);
+}
+
+header .menu_bar .active {
+    color: var(--green-color);
+}
+
+/* header_buttons_container */
+
+.header_buttons_container {
+    display: flex;
+    align-items: center;
+    font-size: 12px; 
+}
+
+.header_buttons_container .first {
+    margin-right: 30px;
+}
+
+header .user_icon_container:hover {
+    color: var(--grey-color);
+}
+

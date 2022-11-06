@@ -1,0 +1,33 @@
+@import '../_vars.css';
+
+.tooltip {
+	display: inline;
+	position: relative;
+}
+
+.tooltip:hover:after {
+	content: attr(data-title);
+	z-index: 1000;
+	position: absolute;
+	bottom: 26px;
+	left: 30%;
+	width: 200px;
+	padding: 7px;
+	font-size: 13px;
+	font-weight: 300;
+	color: white;
+	background-color: var(--dark-green-color);
+	border-radius: 3px;
+}
+
+.tooltip:hover:before {
+	content: "";
+	z-index: 1000;
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	border-style: solid;
+	border-width: 6px 6px 0;
+	border-color: var(--dark-green-color) transparent;
+}
+

@@ -15,23 +15,21 @@ module.exports = function initEvent(sequelize) {
             type: DataTypes.TEXT
         },
         category: {
-            type: DataTypes.ENUM('arrangement', 'reminder', 'task'),
+            type: DataTypes.ENUM("arrangement", "reminder", "task"),
             allowNull: false
         },
         date_from: {
-            type: 'TIMESTAMP',
-            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            type: "TIMESTAMP",
+            defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         },
         date_to: {
-            type: 'TIMESTAMP',
-            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            type: "TIMESTAMP",
+            defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         },
         color: { 
-            type: DataTypes.STRING(6),
-            defaultValue: "ffffff",
-            allowNull: false
+            type: DataTypes.STRING(6)
         }
     },
     {

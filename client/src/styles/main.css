@@ -1,0 +1,98 @@
+@import './_vars.css';
+
+@import './header.css';
+
+@import './elements/user_icon.css';
+@import './elements/tooltip.css';
+@import './elements/forms.css';
+
+body {
+    margin: 0;
+    padding: 0 6vw 0;
+    background-color: var(--white-color);
+    color: var(--black-color);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+}
+
+body a {
+    color: var(--black-color);
+    text-decoration: none;
+}
+
+/* buttons */
+
+.button {
+    border: 2px solid var(--dark-green-color);
+    border-radius: 40px;
+    background-color: var(--dark-green-color);
+    padding: 5px 15px;
+    font-family: inherit;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: white;
+}
+
+.button:hover {
+    background-color: white;
+    color: var(--dark-green-color);
+}
+
+.button.negative {
+    background-color: white;
+    color: var(--dark-green-color);
+}
+
+.button.negative:hover {
+    background-color: var(--dark-green-color);
+    color: white;
+}
+
+/* h2 */
+
+h2 {
+    font-size: 34px;
+}
+
+/* messages */
+
+.main_message {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.small_title {
+    margin: 10px 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--dark-green-color);
+}
+
+.message {
+    margin: 3px 0;
+}
+
+.message.error {
+    color: var(--maroon-color);
+}
+
+.message.success {
+    color: var(--green-color);
+}
+
+/* display_center */
+
+.display_center {
+    display: flex;
+    justify-content: space-around;
+}
+
+.display_center.hr {
+    border-bottom: 1px solid var(--green-color);
+}
+
+.no_hr {
+    border: none;
+}
+

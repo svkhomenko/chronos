@@ -8,8 +8,8 @@ module.exports = function initUserEvent(sequelize) {
             primaryKey: true,
             allowNull: false,
             references: {
-                model: 'User',
-                key: 'id'
+                model: "User",
+                key: "id"
             }
         },
         event_id: {
@@ -17,8 +17,8 @@ module.exports = function initUserEvent(sequelize) {
             primaryKey: true,
             allowNull: false,
             references: {
-                model: 'Event',
-                key: 'id'
+                model: "Event",
+                key: "id"
             }
         },
     },
