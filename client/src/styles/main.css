@@ -1,6 +1,7 @@
 @import './_vars.css';
 
 @import './header.css';
+@import './week.css';
 
 @import './elements/user_icon.css';
 @import './elements/tooltip.css';

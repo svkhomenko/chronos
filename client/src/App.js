@@ -13,6 +13,8 @@ import PasswordConfirmation from "./auth/PasswordConfirmation";
 
 import Header from "./tools/Header";
 
+import Week from "./calendars/Week";
+
 import NotFound from "./tools/NotFound";
 import ErrorPage from "./tools/ErrorPage";
 
@@ -61,6 +63,7 @@ function App() {
                 <Route path="/password-reset/:token" element={<PasswordConfirmation />} />
 
                 <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Login />} />
+                <Route path="/week" element={curUser.id ? <Week /> : <Login />} />
                
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="*" element={<NotFound />} />
