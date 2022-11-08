@@ -38,15 +38,17 @@ function App() {
                 dispatch(removeUser());
             })
             .then((data) => {
-                dispatch(setUser({
-                    id: data.id,
-                    login: data.login,
-                    email: data.email,
-                    fullName: data.fullName,
-                    profilePicture: data.profilePicture,
-                    status: data.status,
-                    token: curUser.token
-                }));
+                if (data) {
+                    dispatch(setUser({
+                        id: data.id,
+                        login: data.login,
+                        email: data.email,
+                        fullName: data.fullName,
+                        profilePicture: data.profilePicture,
+                        status: data.status,
+                        token: curUser.token
+                    }));
+                }
             });
         }
     }, []);
@@ -62,8 +64,8 @@ function App() {
                 <Route path="/password-reset" element={<SendPasswordConfirmation />} />
                 <Route path="/password-reset/:token" element={<PasswordConfirmation />} />
 
-                <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Login />} />
-                <Route path="/week" element={curUser.id ? <Week /> : <Login />} />
+                <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Navigate to="/login" />} />
+                <Route path="/week" element={curUser.id ? <Week /> : <Navigate to="/login" />} />
                
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="*" element={<NotFound />} />

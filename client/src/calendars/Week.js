@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 // import { Link, NavLink } from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux';
+// import { useSelector, useDispatch } from 'react-redux';
 // import { removeUser } from '../store/slices/userSlice';
 import moment from 'moment';
 // import { getSrc, getAvatar } from "./tools_func";
 // import { SERVER_URL } from "../const";
+import isoToGcalDescription from "../tools/isoToGcalDescription";
 
 function Week() {
-    const curUser = useSelector((state) => state.user);
-    const dispatch = useDispatch();
+    // const curUser = useSelector((state) => state.user);
+    // const dispatch = useDispatch();
 
     const halfHours = fillArray(24);
     const days = fillArray(7);
@@ -18,17 +19,35 @@ function Week() {
 
     useEffect(() => {
         const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
-        const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY = "holiday@group.v.calendar.google.com"; // Calendar Id. This is public but apparently not documented anywhere officialy.
+        const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY = "holiday@group.v.calendar.google.com";
         const API_KEY = "AIzaSyD3exYUMZ-2Aa1rXAPVTH4SFAqx5iqkdqs";
-        // const CALENDAR_REGION = "en.usa"; // This variable refers to region whose holidays do we need to fetch
-        const CALENDAR_REGION = "en.ukrainian"; // This variable refers to region whose holidays do we need to fetch
-    
-        const url = `${BASE_CALENDAR_URL}/${CALENDAR_REGION}%23${BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY}/events?key=${API_KEY}`
+        let CALENDAR_REGION = "en.ukrainian";
 
-        fetch(url)
-        .then(response => response.json())
+        fetch('http://ip-api.com/json/')
+        .then(response => {
+            if (!response.ok) {
+                throw response;
+            }
+            return response.json();
+        })
         .then(data => {
-            setHolidays(data.items);
+            CALENDAR_REGION = "en." + isoToGcalDescription[data.countryCode.toLowerCase()];
+        })
+        .then(() => {
+            const url = `${BASE_CALENDAR_URL}/${CALENDAR_REGION}%23${BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY}/events?key=${API_KEY}`
+            fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw response;
+                }
+                return response.json();
+            })
+            .then(data => {
+                setHolidays(data.items);
+            })
+            .catch(err => {
+                console.log("err", err);
+            });
         })
         .catch(err => {
             console.log("err", err);
@@ -37,23 +56,9 @@ function Week() {
 
     function getHolidaysOnDate(date) {
         return holidays.filter(holiday => {
-            let start = new Date(holiday.start.date);
-            // let end = new Date(holiday.end.date);
-            // date = new Date(date);
-            // date = new Date(moment(new Date(date)).startOf('day'));
+            let start = moment(new Date(holiday.start.date)).startOf('day').toDate();
             date = moment(new Date(date)).startOf('day').toDate();
-            start = moment(new Date(start)).startOf('day').toDate();
-
             return date - start == 0;
-
-            // console.log(end - start);
-            // console.log(start, end, date);
-
-            // return start <= date && end >= date;
-            // return start <= date && end > date;
-            // return start == date;
-            // console.log(Math.abs(date - start));
-            // return Math.abs(date - start) <= 86400000;
         });
     }
 
