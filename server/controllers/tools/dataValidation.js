@@ -78,38 +78,59 @@ async function validateEmail(email) {
     }
 }
 
-function validateRole(role) {
-    if (role !== 'admin' && role !== 'user') {
-        throw new ValidationError("Role must be 'admin' or 'user'", 400);
+// function validateRole(role) {
+//     if (role !== 'admin' && role !== 'user') {
+//         throw new ValidationError("Role must be 'admin' or 'user'", 400);
+//     }
+// }
+
+function validateName(name) {
+    if (!name) {
+        throw new ValidationError("Name is required", 400);
+    }
+    if (name.length > 200) {
+        throw new ValidationError("Name length must be less than 200 characters", 400);
     }
 }
 
-// function validateTitle(title) {
-//     if (!title) {
-//         throw new ValidationError("Title is required", 400);
-//     }
-//     if (title.length > 200) {
-//         throw new ValidationError("Title length must be less than 200 characters", 400);
-//     }
-// }
+function validateDescription(description) {
+    if (description) {
+        if (description.length > 65000) {
+            throw new ValidationError("Description length must be less than 65000 characters", 400);
+        }
+    }
+}
 
-// function validateDescription(description) {
-//     if (!description) {
-//         throw new ValidationError("Description is required", 400);
-//     }
-//     if (description.length > 65000) {
-//         throw new ValidationError("Description length must be less than 65000 characters", 400);
-//     }
-// }
+function validateCategory(category) {
+    if (category !== 'arrangement' && category !== 'reminder' && category !== 'task') {
+        throw new ValidationError("Category must be 'arrangement' or 'reminder' or 'task'", 400);
+    }
+}
 
-// function validateContent(content) {
-//     if (!content) {
-//         throw new ValidationError("Content is required", 400);
-//     }
-//     if (content.length > 65000) {
-//         throw new ValidationError("Content length must be less than 65000 characters", 400);
-//     }
-// }
+function validateDate(dateFrom, dateTo, category) {
+    dateFrom = (new Date(dateFrom)).getTime();
+    dateTo = (new Date(dateTo)).getTime();
+
+    if (dateFrom <= 0) {
+        throw new ValidationError("DateFrom is invalid", 400);
+    }
+    if (category == 'arrangement') {
+        if (dateTo <= 0) {
+            throw new ValidationError("DateTo is invalid", 400);
+        }
+        if (dateTo - dateFrom <= 0) {
+            throw new ValidationError("DateTo must be greater than dateFrom", 400);
+        }
+    }
+}
+
+function validateColor(color) {
+    if (color) {
+        if (!/^#[\da-fA-F]{6}$/.test(color)) {
+            throw new ValidationError("Color must be in hexadecimal representation", 400);
+        }
+    }
+}
 
 module.exports = {
     checkPasswordConfirmation,
@@ -117,9 +138,11 @@ module.exports = {
     validateLogin,
     validateFullName,
     validateEmail,
-    validateRole,
-    // validateTitle,
-    // validateDescription,
-    // validateContent
+    // validateRole,
+    validateName,
+    validateDescription,
+    validateCategory,
+    validateDate,
+    validateColor
 }
 

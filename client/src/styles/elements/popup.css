@@ -1,0 +1,32 @@
+@import '../_vars.css';
+
+.popup_background {
+    z-index: 999;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--grey-color);
+    opacity: 0.9;
+}
+
+.popup_container {
+    z-index: 1000;
+    position: fixed;
+    display: flex;
+    width: 600px;
+    height: 540px;
+    overflow-x: auto;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -240px;
+    background-color: white;
+}
+
+.color {
+    width: 20px;
+    height: 20px;
+}
+

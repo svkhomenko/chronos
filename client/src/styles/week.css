@@ -6,16 +6,22 @@
     /* width: 50px;
     height: 50px;
     border: 1px solid red; */
+
+    table-layout: fixed;
 }
 
-.week td {
-    /* width: 50px; */
-    /* width: 100%; */
+.week td,
+.week th {
+    width: 2%;
     height: 50px;
     border: 1px solid var(--grey-color);
 }
 
 .week td.half_hour {
     width: 10px;
+}
+
+.week .event {
+    background-color: red;
 }
 

@@ -75,41 +75,36 @@ function validateEmail(email, setEmailMessage) {
     return true;
 }
 
-// function validateTitle(title, setTitleMessage) {
-//     if (!title) {
-//         setTitleMessage("Title is required");
-//         return false;
-//     }
-//     if (title.length > 200) {
-//         setTitleMessage("Title length must be less than 200 characters");
-//         return false;
-//     }
-//     return true;
-// }
+function validateName(name, setNameMessage) {
+    if (!name) {
+        setNameMessage("Title is required");
+        return false;
+    }
+    if (name.length > 200) {
+        setNameMessage("Title length must be less than 200 characters");
+        return false;
+    }
+    return true;
+}
 
-// function validateDescription(description, setDescriptionMessage) {
-//     if (!description) {
-//         setDescriptionMessage("Description is required");
-//         return false;
-//     }
-//     if (description.length > 65000) {
-//         setDescriptionMessage("Description length must be less than 65000 characters");
-//         return false;
-//     }
-//     return true;
-// }
+function validateDescription(description, setDescriptionMessage) {
+    if (description && description.length > 65000) {
+        setDescriptionMessage("Description length must be less than 65000 characters");
+        return false;
+    }
+    return true;
+}
 
-// function validateContent(content, setContentMessage) {
-//     if (!content) {
-//         setContentMessage("Content is required");
-//         return false;
-//     }
-//     if (content.length > 65000) {
-//         setContentMessage("Content length must be less than 65000 characters");
-//         return false;
-//     }
-//     return true;
-// }
+function validateDate(dateFrom, dateTo, setDateToMessage) {
+    dateFrom = (new Date(dateFrom)).getTime();
+    dateTo = (new Date(dateTo)).getTime();
+
+    if (dateTo - dateFrom <= 0) {
+        setDateToMessage("Date to must be greater than date from");
+        return false;
+    }
+    return true;
+}
 
 export {
     checkPasswordConfirmation,
@@ -117,8 +112,8 @@ export {
     validateLogin,
     validateFullName,
     validateEmail,
-    // validateTitle,
-    // validateDescription,
-    // validateContent
+    validateName,
+    validateDescription,
+    validateDate
 };
 

@@ -11,12 +11,12 @@ import EmailConfirmation from "./auth/EmailConfirmation";
 import SendPasswordConfirmation from "./auth/SendPasswordConfirmation";
 import PasswordConfirmation from "./auth/PasswordConfirmation";
 
-import Header from "./tools/Header";
+import Header from "./elements/Header";
 
 import Week from "./calendars/Week";
 
-import NotFound from "./tools/NotFound";
-import ErrorPage from "./tools/ErrorPage";
+import NotFound from "./elements/NotFound";
+import ErrorPage from "./elements/ErrorPage";
 
 function App() {
     const curUser = useSelector((state) => state.user);

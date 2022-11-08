@@ -6,6 +6,7 @@
 @import './elements/user_icon.css';
 @import './elements/tooltip.css';
 @import './elements/forms.css';
+@import './elements/popup.css';
 
 body {
     margin: 0;

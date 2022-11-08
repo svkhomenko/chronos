@@ -15,18 +15,18 @@ module.exports = function initCalendar(sequelize) {
             type: DataTypes.TEXT
         },
         arrangement_color: { 
-            type: DataTypes.STRING(6),
-            defaultValue: "ffffff",
+            type: DataTypes.STRING(7),
+            defaultValue: "#ffffff",
             allowNull: false
         },
         reminder_color: { 
-            type: DataTypes.STRING(6),
-            defaultValue: "ffffff",
+            type: DataTypes.STRING(7),
+            defaultValue: "#ffffff",
             allowNull: false
         },
         task_color: { 
-            type: DataTypes.STRING(6),
-            defaultValue: "ffffff",
+            type: DataTypes.STRING(7),
+            defaultValue: "#ffffff",
             allowNull: false
         },
         status: {

@@ -19,7 +19,7 @@ async function login(req, res) {
         const user = await User.findOne({
             where: {
                 login: login
-            },
+            }
         });
         if (!user || !bcrypt.compareSync(password, user.encrypted_password)) {
             throw new ValidationError("Wrong login and/or password", 400);

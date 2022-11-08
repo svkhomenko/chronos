@@ -29,7 +29,7 @@ module.exports = function initEvent(sequelize) {
             allowNull: false
         },
         color: { 
-            type: DataTypes.STRING(6)
+            type: DataTypes.STRING(7)
         }
     },
     {

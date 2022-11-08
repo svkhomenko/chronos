@@ -6,7 +6,6 @@ const initUser = require("./user");
 const initCalendar = require("./calendar");
 const initUserCalendar = require("./userCalendar");
 const initEvent = require("./event");
-const initUserEvent = require("./userEvent");
 const initToken = require('./token');
 
 (async () => {
@@ -33,14 +32,12 @@ initUser(sequelize);
 initCalendar(sequelize);
 initUserCalendar(sequelize);
 initEvent(sequelize);
-initUserEvent(sequelize);
 initToken(sequelize);
 
 const User = sequelize.models.user;
 const Calendar = sequelize.models.calendar;
 const UserCalendar = sequelize.models.user_calendar;
 const Event = sequelize.models.event;
-const UserEvent = sequelize.models.user_event;
 
 User.belongsToMany(Calendar, {
     through: UserCalendar,
@@ -51,19 +48,6 @@ User.belongsToMany(Calendar, {
 Calendar.belongsToMany(User, { 
     through: UserCalendar,
     foreignKey: 'calendar_id',
-    otherKey: 'user_id',
-    hooks: true
-});
-
-User.belongsToMany(Event, { 
-    through: UserEvent,
-    foreignKey: 'user_id',
-    otherKey: 'event_id',
-    hooks: true
-});
-Event.belongsToMany(User, { 
-    through: UserEvent,
-    foreignKey: 'event_id',
     otherKey: 'user_id',
     hooks: true
 });

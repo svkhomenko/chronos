@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import { getSrc, getAvatar } from "./tools_func";
+import { getSrc, getAvatar } from "../tools/tools_func";
 import { SERVER_URL } from "../const";
 
 function Header() {
