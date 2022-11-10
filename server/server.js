@@ -19,12 +19,12 @@ require('./token/deleteTokens')();
 const authRouter = require("./routes/auth_router.js");
 const usersRouter = require("./routes/users_router.js");
 const calendarsRouter = require("./routes/calendars_router.js");
-// const eventsRouter = require("./routes/events_router.js");
+const eventsRouter = require("./routes/events_router.js");
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/calendars", calendarsRouter);
-// app.use("/api/events", eventsRouter);
+app.use("/api/events", eventsRouter);
  
 app.use(function (req, res) {
     res.status(404)

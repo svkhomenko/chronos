@@ -28,6 +28,16 @@ module.exports = function initEvent(sequelize) {
             defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         },
+        date_from: {
+            type: "TIMESTAMP",
+            defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+            allowNull: false
+        },
+        date_to: {
+            type: "TIMESTAMP",
+            defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+            allowNull: false
+        },
         color: { 
             type: DataTypes.STRING(7)
         }

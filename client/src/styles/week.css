@@ -17,11 +17,17 @@
     border: 1px solid var(--grey-color);
 }
 
+.week td#td0 {
+    background-color: aquamarine;
+    position: relative;
+}
+
 .week td.half_hour {
     width: 10px;
 }
 
 .week .event {
+    position: absolute;
     background-color: red;
 }
 

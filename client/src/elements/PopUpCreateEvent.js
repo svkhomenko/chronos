@@ -12,14 +12,16 @@ import { SERVER_URL } from "../const";
 
 function PopUpCreateEvent({ date, setIsPopUpOpen }) {
     const curUser = useSelector((state) => state.user);
+    const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('arrangement');
-    const [calendar, setCalendar] = useState('Main calendar');
+    const [calendar, setCalendar] = useState(getMainCalendarId());
     const [dateFrom, setDateFrom] = useState(date);
     const [dateTo, setDateTo] = useState(moment(date).add(0.5,'hours'));
+    const [allDay, setAllDay] = useState(false);
     const [color, setColor] = useState('');
 
     const [nameMessage, setNameMessage] = useState('');
@@ -31,10 +33,10 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
         { value: 'reminder', label: 'Reminder' },
         { value: 'task', label: 'Task' }
     ];
-
-    const calendarOptions = [
-        { value: 'Main calendar', label: 'Main calendar' }
-    ];
+    
+    const calendarOptions = curCalendars.calendars.map(calendar => (
+        { value: calendar.id, label: calendar.name }
+    ))
 
     const colors = ["#fffaaf", "#000000", "#a090b7"];
 
@@ -66,30 +68,46 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                                         onChange={handleChangeCalendar} className='status_select' classNamePrefix='status_select' />
                             </div>
 
-                            <div className='label'>Date from:</div>
+                            <div className='label'>
+                                {category == 'arrangement' ? "Date from:" : "Date"}
+                            </div>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DateTimePicker
                                     label="Responsive"
                                     renderInput={(params) => <TextField {...params} />}
                                     value={dateFrom}
                                     onChange={(newValue) => {
+                                        console.log('nnn', newValue);
                                         setDateFrom(newValue);
                                     }}
                                 />
                             </LocalizationProvider>
 
-                            <div className='label'>Date to:</div>
-                            <div className='message error'>{dateToMessage}</div>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DateTimePicker
-                                    label="Responsive"
-                                    renderInput={(params) => <TextField {...params} />}
-                                    value={dateTo}
-                                    onChange={(newValue) => {
-                                        setDateTo(newValue);
-                                    }}
-                                />
-                            </LocalizationProvider>
+                            {
+                                category == 'arrangement'
+                                ? <div>
+                                    <div className='label'>Date to:</div>
+                                    <div className='message error'>{dateToMessage}</div>
+                                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                                        <DateTimePicker
+                                            label="Responsive"
+                                            renderInput={(params) => <TextField {...params} />}
+                                            value={dateTo}
+                                            onChange={(newValue) => {
+                                                setDateTo(newValue);
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </div>
+                                : <div>
+                                    <input type="checkbox" className="status_checkbox"
+                                            id='all_day' name='all_day'
+                                            checked={allDay} onChange={handleChangeAllDay} />
+                                    <label htmlFor='all_day' className="status_label">
+                                        All day
+                                    </label>
+                                </div>
+                            }
 
                             <div>
                                 Chosen color: {color}
@@ -108,6 +126,11 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
             </div>
         </>
     );
+
+    function getMainCalendarId() {
+        let main = curCalendars.calendars.find(calendar => calendar.status == "main");
+        return main.id;
+    }
 
     function getCategoryValue() {
         return categoryOptions.find(option => option.value == category);
@@ -133,18 +156,24 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
         setCalendar(event.value);
     }
 
+    function handleChangeAllDay() {
+        setAllDay(!allDay);
+
+        if (category !== "arrangement" && !allDay) {
+            setDateFrom(moment(dateFrom).startOf('day').toDate());
+            setDateTo(moment(dateFrom).endOf('day').toDate());
+        }
+    }
+
     function handleSubmit(event) {
         event.preventDefault();
 
         setNameMessage('');
         setDescriptionMessage('');
         setDateToMessage('');
-
-        // const { name, description, category, dateFrom, dateTo, color } = req.body;
-        // "/:calendar_id",
-
+        
         if (isDataValid()) {
-            fetch(SERVER_URL + `/api/calendars/${1}/events`, {
+            fetch(SERVER_URL + `/api/calendars/${calendar}/events`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,8 +192,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                 if (!response.ok) {
                     throw response;
                 }
-
-                // return response.json();
+                window.location.reload();
             })
             .catch((err) => {
                 console.log('err', err, err.body);
@@ -177,7 +205,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                         window.location.href = '/login';
                         break;
                     default:
-                        // window.location.href = '/error';
+                        window.location.href = '/error';
                 }
             })
             .then((err) => {
@@ -192,7 +220,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                         setDateToMessage(err.message);
                     }
                     else {
-                        // window.location.href = '/error';
+                        window.location.href = '/error';
                     }
                 }
             }); 

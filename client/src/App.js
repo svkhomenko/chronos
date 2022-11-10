@@ -12,6 +12,7 @@ import SendPasswordConfirmation from "./auth/SendPasswordConfirmation";
 import PasswordConfirmation from "./auth/PasswordConfirmation";
 
 import Header from "./elements/Header";
+import Sidebar from "./elements/Sidebar";
 
 import Week from "./calendars/Week";
 
@@ -56,6 +57,10 @@ function App() {
     return (
         <Router>
             <Header />
+
+            {
+                curUser.id && <Sidebar />
+            }
             
             <Routes>
                 <Route path="/login" element={curUser.id ? <Navigate to="/" /> : <Login />} />

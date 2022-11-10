@@ -1,5 +1,6 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from "@reduxjs/toolkit";
 import userReducer from './slices/userSlice';
+import calendarsReducer from './slices/calendarsSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 
@@ -8,7 +9,7 @@ const persistConfig = {
     storage
 };
 
-const persistedReducer = persistReducer(persistConfig, combineReducers({ user: userReducer }));
+const persistedReducer = persistReducer(persistConfig, combineReducers({ user: userReducer, calendars: calendarsReducer }));
 
 export const store = configureStore({
     reducer: persistedReducer,
