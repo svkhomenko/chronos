@@ -20,7 +20,7 @@ async function createNewEvent(req, res) {
 
         const calendar = await Calendar.findByPk(calendarId);
         if (!calendar) {
-            throw new ValidationError("CalendarId is required", 400);
+            throw new ValidationError("No such calendar", 404);
         }
         
         const event = await Event.create({

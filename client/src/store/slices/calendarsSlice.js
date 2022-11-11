@@ -2,7 +2,8 @@ import { buildExternalHelpers } from '@babel/core';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    calendars: []
+    calendars: [],
+    scrollToY: 0
 }
 
 export const calendarsSlice = createSlice({
@@ -14,10 +15,16 @@ export const calendarsSlice = createSlice({
         },
         removeCalendars(state) {
             state.calendars = [];
+        },
+        setScrollToY: (state, action) => {
+            state.scrollToY = action.payload.scrollToY;
+        },
+        removeScrollToY(state) {
+            state.scrollToY = 0;
         }
     }
 });
 
-export const { setCalendars, removeCalendars } = calendarsSlice.actions;
+export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY } = calendarsSlice.actions;
 export default calendarsSlice.reducer;
 

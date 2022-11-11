@@ -15,10 +15,10 @@
     width: 2%;
     height: 50px;
     border: 1px solid var(--grey-color);
+    box-sizing: border-box;
 }
 
 .week td#td0 {
-    background-color: aquamarine;
     position: relative;
 }
 
@@ -28,6 +28,15 @@
 
 .week .event {
     position: absolute;
+}
+
+.week .header_event {
+    position: relative;
+    min-height: 20px;
+}
+
+.week .event_rnd {
     background-color: red;
+    border: 1px solid blue;
 }
 

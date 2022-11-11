@@ -77,7 +77,6 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                                     renderInput={(params) => <TextField {...params} />}
                                     value={dateFrom}
                                     onChange={(newValue) => {
-                                        console.log('nnn', newValue);
                                         setDateFrom(newValue);
                                     }}
                                 />

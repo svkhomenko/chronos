@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
+import { setScrollToY, removeScrollToY } from '../store/slices/calendarsSlice';
 import moment from 'moment';
 import { Rnd } from 'react-rnd';
 // import { getSrc, getAvatar } from "./tools_func";
@@ -26,6 +27,13 @@ function Week() {
     
     const [widthTD, setWidthTD] = useState(300);
     const [heightTD, setHeightTD] = useState(100);
+
+    useEffect(() => {
+        if (curCalendars.scrollToY) {
+            window.scrollTo(0, curCalendars.scrollToY);
+            dispatch(removeScrollToY());
+        }
+    });
 
     useEffect(() => {
         const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
@@ -93,7 +101,6 @@ function Week() {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
             setEvents(data);
         })
         .catch((err) => {
@@ -116,11 +123,6 @@ function Week() {
                 isPopUpOpen &&
                 <PopUpCreateEvent date={dateForPopup} setIsPopUpOpen={setIsPopUpOpen} />
             }
-            {/* <Rnd className='event'
-                size={{ width: widthTD,  height: heightTD }}>
-                Rnd
-            </Rnd> */}
-            {console.log("ttt", widthTD, heightTD)}
             <table onClick={createEvent}>
                 <thead>
                     <tr>
@@ -131,6 +133,18 @@ function Week() {
                                     {date}---
                                     {getHolidaysOnDate(date).map(holiday => (
                                         holiday.summary
+                                    ))}----
+                                    {moment(new Date(date)).isoWeek()}---
+                                    {getAllDayEvents(date).map(event => (
+                                        <div key={event.id} className='header_event' size={getEventSize(event)}>
+                                            <Rnd className='event_rnd' data-id={event.id}
+                                                    size={getEventSize(event)}
+                                                    enableResizing={false}
+                                                    dragAxis='x'
+                                                    onDragStop={handleDragStop}>
+                                                {event.name}
+                                            </Rnd>
+                                        </div>
                                     ))}
                                 </th>
                             ))
@@ -143,13 +157,6 @@ function Week() {
                                 <React.Fragment key={hour}>
                                     <tr>
                                         <td className='half_hour'>{hour}</td>
-                                        {/* {
-                                            days.map((day) => (
-                                                <td key={day}
-                                                    data-week={week[day]}
-                                                    data-time={hour} />
-                                            ))
-                                        } */}
                                         {
                                             days.map((day, index) => (
                                                 <td key={day}
@@ -159,17 +166,19 @@ function Week() {
                                                     {
                                                         (hour == 0 && index == 0) &&
                                                         <>
-                                                            {
-                                                                events.map(event => (
-                                                                    <Rnd key={event.id} className='event' 
-                                                                        // size={getEventSize(event)}
-                                                                        // position={getEventPosition(event)}
-                                                                        style={getStyle()}>
-                                                                        Rnd
-                                                                    </Rnd>
+                                                            {                                                       
+                                                                splitEventsIntoDays(events).map((event, index) => (
+                                                                    <div key={event.id + '-' + index} className='event' style={getStylePosition(event)}>
+                                                                        <Rnd className='event_rnd' data-id={event.id}
+                                                                                size={getEventSize(event)}
+                                                                                enableResizing={event.category != "arrangement" ? false : {top:true, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
+                                                                                onResizeStop={handleResizeStop}
+                                                                                onDragStop={handleDragStop}>
+                                                                            {event.name}
+                                                                        </Rnd>
+                                                                    </div>
                                                                 ))
                                                             }
-                                                            {/* <div className='event' style={getStyle()}>hhhh</div> */}
                                                         </>
                                                     }
                                                 </td>
@@ -177,7 +186,7 @@ function Week() {
                                         }
                                     </tr>
                                     <tr>
-                                        <td></td>
+                                        <td/>
                                         {
                                             days.map((day) => (
                                                 <td key={day}
@@ -206,6 +215,18 @@ function Week() {
     function getHolidaysOnDate(date) {
         return holidays.filter(holiday => {
             let start = moment(new Date(holiday.start.date)).startOf('day').toDate();
+            date = moment(new Date(date)).startOf('day').toDate();
+            return date - start == 0;
+        });
+    }
+
+    function getAllDayEvents(date) {
+        return events.filter(event => {
+            if (!isAllDay(event)) {
+                return false;
+            }
+
+            let start = moment(new Date(event.dateFrom)).startOf('day').toDate();
             date = moment(new Date(date)).startOf('day').toDate();
             return date - start == 0;
         });
@@ -249,43 +270,172 @@ function Week() {
         height *= heightTD * 2;
 
         return {
-            width: widthTD,
+            width: widthTD / event.widthCollision,
             height
         };
     }
 
-    function getStyle() {
-        return {top: 0};
-    }
-
-    function getEventPosition(event) {
-        // console.log('jjj');
+    function getStylePosition(event) {
         let date = (new Date(event.dateFrom));
 
-        let x = week.findIndex(day => day == moment(date).startOf('days').format('llll'));
-        x = widthTD * x;
+        let left = week.findIndex(day => day == moment(date).startOf('days').format('llll'));
+        left = widthTD * left;
+        left += event.numberInWidthCollision * widthTD / event.widthCollision;
 
-        let y = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
-        y /= 60 * 60;
-        y *= heightTD * 2;
-
-        // console.log(y, event.dateFrom);
-
-        // let td = document.querySelector('td');
-        // if (td) {
-        //     setWidthTD(td.offsetWidth);
-        //     setHeightTD(td.offsetHeight);
-        // }
-
-        // let th = document.querySelector('th');
-        // if (th) {
-        //     console.log('th', th.offsetWidth, th.offsetHeight);
-        // }
+        let top = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
+        top /= 60 * 60;
+        top *= heightTD * 2;
 
         return {
-            x,
-            y
+            left: left + 'px',
+            top: top + 'px'
         };
+    }
+
+    function handleResizeStop(e, direction, ref, delta, position) {
+        let event = events.find(event => event.id == ref.dataset.id);
+        let deltaHours = delta.height / (heightTD * 2);
+
+        let body = {};
+        if (direction == "bottom") {
+            body.dateTo = moment(new Date(event.dateTo)).add(deltaHours, "hours");
+        }
+        else if (direction == "top") {
+            body.dateFrom = moment(new Date(event.dateFrom)).subtract(deltaHours, "hours");
+        }
+        
+        updateEvent(event.id, body);
+    }
+
+    function handleDragStop(e, data) {
+        let event = events.find(event => event.id == data.node.dataset.id);
+        let deltaHours = data.y / (heightTD * 2);
+
+        let body = {};
+        body.dateTo = moment(new Date(event.dateTo)).add(deltaHours, "hours");
+        body.dateFrom = moment(new Date(event.dateFrom)).add(deltaHours, "hours");
+
+        let deltaDays = Math.round(data.x / widthTD);
+        if (deltaDays) {
+            body.dateTo = moment(body.dateTo).add(deltaDays, "days");
+            body.dateFrom = moment(body.dateFrom).add(deltaDays, "days");
+        }
+        
+        updateEvent(event.id, body);
+    }
+
+    function updateEvent(eventId, body) {
+        fetch(SERVER_URL + `/api/events/${eventId}}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': curUser.token
+            },
+            body: JSON.stringify(body)
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw response;
+            }
+            dispatch(setScrollToY({scrollToY: window.pageYOffset}));
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.log('err', err, err.body);
+            switch(err.status) {
+                case 401:
+                case 403:
+                    dispatch(removeUser());
+                    window.location.href = '/login';
+                    break;
+                default:
+                    window.location.href = '/error';
+            }
+        });
+    }
+
+    function isAllDay(event) {
+        if (event.category == "arrangement") {
+            return false;
+        }
+
+        let day = moment(new Date(event.dateFrom));
+        return moment(day).startOf('days').format('llll') == moment(new Date(event.dateFrom)).format('llll')
+                && moment(day).endOf('days').format('llll') == moment(new Date(event.dateTo)).format('llll');
+    }
+
+    function splitEventsIntoDays(data) {
+        let splitEvents = [];
+
+        // data.forEach(event => {
+        //     if (!isAllDay(event)) {
+        //         let dateFrom = moment(event.dateFrom);
+        //         let dateTo = moment(event.dateTo);
+        //         if (event.category == "arrangement") {
+        //             while (moment(dateFrom).startOf('days').format('llll') != moment(dateTo).startOf('days').format('llll')) {
+        //                 splitEvents.push({
+        //                     ...event,
+        //                     dateFrom: moment(dateFrom).format('llll'),
+        //                     dateTo: moment(dateFrom).endOf('days').format('llll')
+        //                 });
+        
+        //                 dateFrom = moment(dateFrom).add(1, "days").startOf('days');
+        //             }
+        //         }
+        //         splitEvents.push({
+        //             ...event,
+        //             dateFrom: dateFrom.format('llll'),
+        //             dateTo: dateTo.format('llll')
+        //         });
+        //     }
+        // });
+
+        data = data.filter(event => !isAllDay(event));
+
+        data = data.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom));
+        let temp = [];
+        data.forEach(event => {
+            event.numberInWidthCollision = 0;
+            temp = temp.filter(tempEvent => new Date(tempEvent.dateTo) - new Date(event.dateFrom) > 0);
+            event.widthCollision = temp.length;
+            event.numberInWidthCollision = temp.length;
+            
+            for (let i = 0; i < event.numberInWidthCollision; i++) {
+                if (!temp.find(tempEvent => tempEvent.numberInWidthCollision == i)) {
+                    event.numberInWidthCollision = i;
+                    break;
+                }
+            }
+            // if (event.numberInWidthCollision == temp[temp.length - 1].numberInWidthCollision) {           //// ????
+            //     event.numberInWidthCollision
+            // }
+
+            temp.push(event);
+            temp.forEach(tempEvent => tempEvent.widthCollision++);
+        });
+
+        data.forEach(event => {
+            let dateFrom = moment(event.dateFrom);
+            let dateTo = moment(event.dateTo);
+            if (event.category == "arrangement") {
+                while (moment(dateFrom).startOf('days').format('llll') != moment(dateTo).startOf('days').format('llll')) {
+                    splitEvents.push({
+                        ...event,
+                        dateFrom: moment(dateFrom).format('llll'),
+                        dateTo: moment(dateFrom).endOf('days').format('llll')
+                    });
+    
+                    dateFrom = moment(dateFrom).add(1, "days").startOf('days');
+                }
+            }
+            splitEvents.push({
+                ...event,
+                dateFrom: dateFrom.format('llll'),
+                dateTo: dateTo.format('llll')
+            });
+        });
+
+        return splitEvents;
     }
 }
 
