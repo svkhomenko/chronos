@@ -10,7 +10,7 @@ eventsRouter.get("/", isAuth, eventsController.getAllEvents);
 // eventsRouter.post("/:calendar_id/events", eventsController, calendarsController.createNewEvent);
 // eventsRouter.patch("/avatar", isAuth, avatarUpload, eventsController.uploadAvatar);
 eventsRouter.patch("/:event_id", canUpdateEvent, eventsController.updateEventData);
-// eventsRouter.delete("/:user_id", canUpdateUserData, eventsController.deleteUser);
+eventsRouter.delete("/:event_id", canUpdateEvent, eventsController.deleteEvent);
 
 module.exports = eventsRouter;
 

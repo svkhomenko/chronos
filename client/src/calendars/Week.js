@@ -1,22 +1,113 @@
 import React, { useState, useEffect } from 'react';
-// import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
 import { setScrollToY, removeScrollToY } from '../store/slices/calendarsSlice';
 import moment from 'moment';
 import { Rnd } from 'react-rnd';
-// import { getSrc, getAvatar } from "./tools_func";
 import { SERVER_URL } from "../const";
-import PopUpCreateEvent from "../elements/PopUpCreateEvent";
+import PopUpCreateEvent from "../popups/PopUpCreateEvent";
+import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
+import { fillArray, getHolidaysOnDate, isAllDay, updateEvent } from "./calendars_tools";
 import isoToGcalDescription from "../tools/isoToGcalDescription";
+
+function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
+    const [isDragging, setIsDragging] = useState(false);
+
+    return (
+        <div className='header_event' size={size}>
+            <Rnd className='event_rnd' data-id={event.id}
+                    style={styleColor}
+                    size={size}
+                    enableResizing={false}
+                    dragAxis='x'
+                    onDragStop={onBoxDragStop}
+                    onDragStart={onBoxDragStart}>
+                <div style={{height:'100%'}} onClick={handleClick}>
+                    {event.name}
+                </div>
+            </Rnd>
+        </div>
+    );
+
+    function handleClick() {
+        if (isDragging) {
+            return;
+        }
+        
+        openEventPopup(event);
+    }
+
+    function onBoxDragStop(e, data) {
+        setTimeout(() => {
+            setIsDragging(false);
+        }, 200);
+
+        if (isDragging) {
+            handleDragStop(e, data);
+        }
+    }
+  
+    function onBoxDragStart() {
+        setTimeout(() => {
+            setIsDragging(true);
+        }, 200);
+    }
+}
+
+function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, handleDragStop, openEventPopup }) {
+    const [isDragging, setIsDragging] = useState(false);
+
+    return (
+        <div className='event' style={stylePosition}>
+            <Rnd className='event_rnd' data-id={event.id}
+                    style={styleColor}
+                    size={size}
+                    enableResizing={event.category != "arrangement" ? false : {top:true, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
+                    onResizeStop={handleResizeStop}
+                    onDragStop={onBoxDragStop}
+                    onDragStart={onBoxDragStart}>
+                <div style={{height:'100%'}} onClick={handleClick}>
+                    {event.name}
+                </div>
+            </Rnd>
+        </div>
+    );
+
+    function handleClick() {
+        if (isDragging) {
+            return;
+        }
+        
+        openEventPopup(event);
+    }
+
+    function onBoxDragStop(e, data) {
+        setTimeout(() => {
+            setIsDragging(false);
+        }, 200);
+
+        if (isDragging) {
+            handleDragStop(e, data);
+        }
+    }
+  
+    function onBoxDragStart() {
+        setTimeout(() => {
+            setIsDragging(true);
+        }, 200);
+    }
+}
 
 function Week() {
     const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
 
-    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    const [dateForPopup, setDateForPopup] = useState(moment());
+    const [isPopUpCreateEventOpen, setIsPopUpCreateEventOpen] = useState(false);
+    const [dateForPopupCreateEvent, setDateForPopupCreateEvent] = useState(moment());
+
+    const [isPopUpGetEventInfoOpen, setIsPopUpGetEventInfoOpen] = useState(false);
+    const [eventForPopupGetEventInfo, setEventForPopupGetEventInfo] = useState();
 
     const hours = fillArray(24);
     const days = fillArray(7);
@@ -83,7 +174,8 @@ function Week() {
     useEffect(() => {
         fetch(SERVER_URL + `/api/events?` + new URLSearchParams(
             {
-                calendarIds: curCalendars.calendars.map((calendar => calendar.id)).join(','),
+                calendarIds: curCalendars.calendars.filter(calendar => calendar.active)
+                                                .map(calendar => calendar.id).join(','),
                 dateFrom: week[0],
                 dateTo: moment(new Date(week[week.length - 1])).add(1, "days").format('llll')
             }
@@ -120,8 +212,12 @@ function Week() {
     return (
         <div className='week'>
             {
-                isPopUpOpen &&
-                <PopUpCreateEvent date={dateForPopup} setIsPopUpOpen={setIsPopUpOpen} />
+                isPopUpCreateEventOpen &&
+                <PopUpCreateEvent date={dateForPopupCreateEvent} setIsPopUpOpen={setIsPopUpCreateEventOpen} />
+            }
+            {
+                isPopUpGetEventInfoOpen &&
+                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
             }
             <table onClick={createEvent}>
                 <thead>
@@ -131,20 +227,17 @@ function Week() {
                             week.map(date => (
                                 <th key={date}>
                                     {date}---
-                                    {getHolidaysOnDate(date).map(holiday => (
+                                    {getHolidaysOnDate(date, holidays).map(holiday => (
                                         holiday.summary
                                     ))}----
                                     {moment(new Date(date)).isoWeek()}---
                                     {getAllDayEvents(date).map(event => (
-                                        <div key={event.id} className='header_event' size={getEventSize(event)}>
-                                            <Rnd className='event_rnd' data-id={event.id}
-                                                    size={getEventSize(event)}
-                                                    enableResizing={false}
-                                                    dragAxis='x'
-                                                    onDragStop={handleDragStop}>
-                                                {event.name}
-                                            </Rnd>
-                                        </div>
+                                        <RndHeaderEvent key={event.id}
+                                                        event={event}
+                                                        styleColor={getEventColor(event)}
+                                                        size={getEventSize(event)}
+                                                        handleDragStop={handleDragStop}
+                                                        openEventPopup={openEventPopup} />
                                     ))}
                                 </th>
                             ))
@@ -168,15 +261,14 @@ function Week() {
                                                         <>
                                                             {                                                       
                                                                 splitEventsIntoDays(events).map((event, index) => (
-                                                                    <div key={event.id + '-' + index} className='event' style={getStylePosition(event)}>
-                                                                        <Rnd className='event_rnd' data-id={event.id}
-                                                                                size={getEventSize(event)}
-                                                                                enableResizing={event.category != "arrangement" ? false : {top:true, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
-                                                                                onResizeStop={handleResizeStop}
-                                                                                onDragStop={handleDragStop}>
-                                                                            {event.name}
-                                                                        </Rnd>
-                                                                    </div>
+                                                                    <RndEvent key={event.id + '-' + index} 
+                                                                            event={event}
+                                                                            stylePosition={getStylePosition(event)}
+                                                                            styleColor={getEventColor(event)}
+                                                                            size={getEventSize(event)}
+                                                                            handleResizeStop={handleResizeStop}
+                                                                            handleDragStop={handleDragStop}
+                                                                            openEventPopup={openEventPopup}/>
                                                                 ))
                                                             }
                                                         </>
@@ -204,20 +296,13 @@ function Week() {
         </div>
     );
 
-    function fillArray(n) {
-        let arr = [];
-        for (let i = 0; i < n; i++) {
-            arr.push(i);
+    function getEventColor(event) {
+        if (event.color) {
+            return { backgroundColor: event.color };
         }
-        return arr;
-    }
-
-    function getHolidaysOnDate(date) {
-        return holidays.filter(holiday => {
-            let start = moment(new Date(holiday.start.date)).startOf('day').toDate();
-            date = moment(new Date(date)).startOf('day').toDate();
-            return date - start == 0;
-        });
+        
+        const calendar = curCalendars.calendars.find(calendar => calendar.id == event.calendarId);
+        return { backgroundColor: calendar[`${event.category}Color`] };
     }
 
     function getAllDayEvents(date) {
@@ -245,15 +330,15 @@ function Week() {
     function setNewSizes() {
         let td = document.querySelector('td');
         if (td) {
-            setWidthTD(td.offsetWidth);
-            setHeightTD(td.offsetHeight);
+            setWidthTD(td.getBoundingClientRect().width);
+            setHeightTD(td.getBoundingClientRect().height);
         }
     }
 
     function createEvent(event) {
         if (event.target.tagName == 'TD') {
-            setDateForPopup(moment(new Date(event.target.dataset.week)).add(event.target.dataset.time,'hours'));
-            setIsPopUpOpen(true);
+            setDateForPopupCreateEvent(moment(new Date(event.target.dataset.week)).add(event.target.dataset.time,'hours'));
+            setIsPopUpCreateEventOpen(true);
         }
     }
 
@@ -304,7 +389,14 @@ function Week() {
             body.dateFrom = moment(new Date(event.dateFrom)).subtract(deltaHours, "hours");
         }
         
-        updateEvent(event.id, body);
+        updateEvent(event.id, body, curUser, 
+            () => {
+                dispatch(setScrollToY({scrollToY: window.pageYOffset}));
+                window.location.reload();
+            }, 
+            () => {
+                dispatch(removeUser());
+            });
     }
 
     function handleDragStop(e, data) {
@@ -321,74 +413,18 @@ function Week() {
             body.dateFrom = moment(body.dateFrom).add(deltaDays, "days");
         }
         
-        updateEvent(event.id, body);
-    }
-
-    function updateEvent(eventId, body) {
-        fetch(SERVER_URL + `/api/events/${eventId}}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': curUser.token
-            },
-            body: JSON.stringify(body)
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw response;
-            }
-            dispatch(setScrollToY({scrollToY: window.pageYOffset}));
-            window.location.reload();
-        })
-        .catch((err) => {
-            console.log('err', err, err.body);
-            switch(err.status) {
-                case 401:
-                case 403:
-                    dispatch(removeUser());
-                    window.location.href = '/login';
-                    break;
-                default:
-                    window.location.href = '/error';
-            }
-        });
-    }
-
-    function isAllDay(event) {
-        if (event.category == "arrangement") {
-            return false;
-        }
-
-        let day = moment(new Date(event.dateFrom));
-        return moment(day).startOf('days').format('llll') == moment(new Date(event.dateFrom)).format('llll')
-                && moment(day).endOf('days').format('llll') == moment(new Date(event.dateTo)).format('llll');
+        updateEvent(event.id, body, curUser, 
+            () => {
+                dispatch(setScrollToY({scrollToY: window.pageYOffset}));
+                window.location.reload();
+            }, 
+            () => {
+                dispatch(removeUser());
+            });
     }
 
     function splitEventsIntoDays(data) {
         let splitEvents = [];
-
-        // data.forEach(event => {
-        //     if (!isAllDay(event)) {
-        //         let dateFrom = moment(event.dateFrom);
-        //         let dateTo = moment(event.dateTo);
-        //         if (event.category == "arrangement") {
-        //             while (moment(dateFrom).startOf('days').format('llll') != moment(dateTo).startOf('days').format('llll')) {
-        //                 splitEvents.push({
-        //                     ...event,
-        //                     dateFrom: moment(dateFrom).format('llll'),
-        //                     dateTo: moment(dateFrom).endOf('days').format('llll')
-        //                 });
-        
-        //                 dateFrom = moment(dateFrom).add(1, "days").startOf('days');
-        //             }
-        //         }
-        //         splitEvents.push({
-        //             ...event,
-        //             dateFrom: dateFrom.format('llll'),
-        //             dateTo: dateTo.format('llll')
-        //         });
-        //     }
-        // });
 
         data = data.filter(event => !isAllDay(event));
 
@@ -406,9 +442,6 @@ function Week() {
                     break;
                 }
             }
-            // if (event.numberInWidthCollision == temp[temp.length - 1].numberInWidthCollision) {           //// ????
-            //     event.numberInWidthCollision
-            // }
 
             temp.push(event);
             temp.forEach(tempEvent => tempEvent.widthCollision++);
@@ -436,6 +469,11 @@ function Week() {
         });
 
         return splitEvents;
+    }
+
+    function openEventPopup(event) {
+        setEventForPopupGetEventInfo(event);
+        setIsPopUpGetEventInfoOpen(true);
     }
 }
 

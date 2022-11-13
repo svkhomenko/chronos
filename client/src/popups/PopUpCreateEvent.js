@@ -7,7 +7,9 @@ import TextField from '@mui/material/TextField';
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
+import { setScrollToY, setMessage } from '../store/slices/calendarsSlice';
 import { validateName, validateDescription, validateDate } from "../tools/dataValidation";
+import { colors } from "../tools/const_tools";
 import { SERVER_URL } from "../const";  
 
 function PopUpCreateEvent({ date, setIsPopUpOpen }) {
@@ -20,7 +22,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
     const [category, setCategory] = useState('arrangement');
     const [calendar, setCalendar] = useState(getMainCalendarId());
     const [dateFrom, setDateFrom] = useState(date);
-    const [dateTo, setDateTo] = useState(moment(date).add(0.5,'hours'));
+    const [dateTo, setDateTo] = useState(moment(date).add(0.5, 'hours'));
     const [allDay, setAllDay] = useState(false);
     const [color, setColor] = useState('');
 
@@ -36,9 +38,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
     
     const calendarOptions = curCalendars.calendars.map(calendar => (
         { value: calendar.id, label: calendar.name }
-    ))
-
-    const colors = ["#fffaaf", "#000000", "#a090b7"];
+    ));
 
     return (
         <>
@@ -109,7 +109,13 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                             }
 
                             <div>
-                                Chosen color: {color}
+                                Color: 
+                                { color &&
+                                    <div>
+                                        Chosen color: <div className='color' style={{ backgroundColor: color }} />
+                                        <div onClick={() => {setColor('')}}>Delete color</div>
+                                    </div>
+                                }
                                 {
                                     colors.map((c, index) => (
                                         <div key={index} className='color' onClick={() => {setColor(c)}}
@@ -191,6 +197,8 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                 if (!response.ok) {
                     throw response;
                 }
+                dispatch(setScrollToY({scrollToY: window.pageYOffset}));
+                dispatch(setMessage({ message: "Event was successfully created" }));
                 window.location.reload();
             })
             .catch((err) => {

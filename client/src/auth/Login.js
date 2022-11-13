@@ -70,7 +70,8 @@ function Login() {
                 body: JSON.stringify({ 
                     login,
                     password,
-                    link: CLIENT_URL + '/email-confirmation' })
+                    link: CLIENT_URL + '/email-confirmation'
+                })
             })
             .then((response) => {
                 if (!response.ok) {

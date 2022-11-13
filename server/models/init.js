@@ -39,19 +39,6 @@ const Calendar = sequelize.models.calendar;
 const UserCalendar = sequelize.models.user_calendar;
 const Event = sequelize.models.event;
 
-// User.belongsToMany(Calendar, {
-//     through: UserCalendar,
-//     foreignKey: 'user_id',
-//     otherKey: 'calendar_id',
-//     hooks: true
-// });
-// Calendar.belongsToMany(User, { 
-//     through: UserCalendar,
-//     foreignKey: 'calendar_id',
-//     otherKey: 'user_id',
-//     hooks: true
-// });
-
 User.belongsToMany(Calendar, {
     through: UserCalendar,
     foreignKey: 'user_id',

@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     calendars: [],
-    scrollToY: 0
+    scrollToY: 0,
+    message: ''
 }
 
 export const calendarsSlice = createSlice({
@@ -21,10 +22,16 @@ export const calendarsSlice = createSlice({
         },
         removeScrollToY(state) {
             state.scrollToY = 0;
+        },
+        setMessage: (state, action) => {
+            state.message = action.payload.message;
+        },
+        removeMessage(state) {
+            state.message = '';
         }
     }
 });
 
-export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY } = calendarsSlice.actions;
+export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY, setMessage, removeMessage } = calendarsSlice.actions;
 export default calendarsSlice.reducer;
 

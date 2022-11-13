@@ -13,8 +13,12 @@ import PasswordConfirmation from "./auth/PasswordConfirmation";
 
 import Header from "./elements/Header";
 import Sidebar from "./elements/Sidebar";
+import Message from "./popups/Message";
 
 import Week from "./calendars/Week";
+
+import CreateCalendar from "./calendars/CreateCalendar";
+import CreateEvent from "./calendars/CreateEvent";
 
 import NotFound from "./elements/NotFound";
 import ErrorPage from "./elements/ErrorPage";
@@ -61,6 +65,8 @@ function App() {
             {
                 curUser.id && <Sidebar />
             }
+
+            <Message />
             
             <Routes>
                 <Route path="/login" element={curUser.id ? <Navigate to="/" /> : <Login />} />
@@ -71,6 +77,9 @@ function App() {
 
                 <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Navigate to="/login" />} />
                 <Route path="/week" element={curUser.id ? <Week /> : <Navigate to="/login" />} />
+
+                <Route path="/create_calendar" element={curUser.id ? <CreateCalendar /> : <Navigate to="/login" />} />
+                <Route path="/create_event" element={curUser.id ? <CreateEvent /> : <Navigate to="/login" />} />
                
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="*" element={<NotFound />} />

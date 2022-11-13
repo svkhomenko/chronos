@@ -7,10 +7,11 @@ const calendarsRouter = express.Router();
 calendarsRouter.get("/", isAuth, calendarsController.getAllCalendars);
 // calendarsRouter.get("/:user_id", isAuth, calendarsController.getUserById);
 // calendarsRouter.get("/:user_id/rating", calendarsController.getRatingById);
+calendarsRouter.post("/", isAuth, calendarsController.createNewCalendar);
 calendarsRouter.post("/:calendar_id/events", canUpdateCalendar, calendarsController.createNewEvent);
 // calendarsRouter.patch("/avatar", isAuth, avatarUpload, evencalendarsControllertsController.uploadAvatar);
-// calendarsRouter.patch("/:user_id", canUpdateUserData, avatarUpload, calendarsController.uploadUserData);
-// calendarsRouter.delete("/:user_id", canUpdateUserData, calendarsController.deleteUser);
+calendarsRouter.patch("/:calendar_id", canUpdateCalendar, calendarsController.updateCalendarData);
+calendarsRouter.delete("/:calendar_id", canUpdateCalendar, calendarsController.deleteCalendar);
 
 module.exports = calendarsRouter;
 

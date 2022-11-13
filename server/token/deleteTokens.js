@@ -9,7 +9,7 @@ function destroyTokens() {
     const threshold = new Date(Date.now() - process.env.EXPIRE_SEC * 1000);
     Token.destroy({
         where: {
-            createdAt: { 
+            created_at: { 
                 [Op.lt]: threshold,
             },
         }})

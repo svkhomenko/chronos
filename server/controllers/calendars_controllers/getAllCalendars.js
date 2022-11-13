@@ -15,7 +15,6 @@ async function getAllCalendars(req, res) {
         let calendars = await Calendar.findAll({
             include: [
                 {
-                    attributes: [],
                     model: UserCalendar,
                     where: {
                         user_id: decoded.id
@@ -31,7 +30,8 @@ async function getAllCalendars(req, res) {
             arrangementColor: calendar.arrangement_color,
             reminderColor: calendar.reminder_color,
             taskColor: calendar.task_color,
-            status: calendar.status
+            status: calendar.status,
+            userRole: calendar.user_calendars[0].user_role
         }));
 
         res.status(200)
