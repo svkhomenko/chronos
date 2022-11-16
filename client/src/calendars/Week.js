@@ -318,7 +318,7 @@ function Week() {
     }
 
     function getDates() {
-        let start = moment().startOf('isoWeek').startOf('day');
+        let start = moment(curCalendars.curDate).startOf('isoWeek').startOf('day');
         let week = [];
         for (let i = 0; i < 7; i++) {
             week.push(start.format('llll'));

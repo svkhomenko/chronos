@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, removeUser } from './store/slices/userSlice';
+import { removeCurDate, removeRepresentation } from './store/slices/calendarsSlice';
 import { SERVER_URL } from "./const";
 import "./styles/main.css";
 
@@ -16,6 +17,7 @@ import Sidebar from "./elements/Sidebar";
 import Message from "./popups/Message";
 
 import Week from "./calendars/Week";
+import Month from "./calendars/Month";
 
 import CreateCalendar from "./calendars/CreateCalendar";
 import CreateEvent from "./calendars/CreateEvent";
@@ -26,7 +28,7 @@ import ErrorPage from "./elements/ErrorPage";
 function App() {
     const curUser = useSelector((state) => state.user);
     const dispatch = useDispatch();
-
+    
     useEffect(() => {
         if (curUser.id) {
             fetch(SERVER_URL + `/api/users/${curUser.id}`, 
@@ -41,6 +43,8 @@ function App() {
                     return response.json();
                 }
                 dispatch(removeUser());
+                dispatch(removeCurDate());
+                dispatch(removeRepresentation());
             })
             .then((data) => {
                 if (data) {
@@ -75,8 +79,10 @@ function App() {
                 <Route path="/password-reset" element={<SendPasswordConfirmation />} />
                 <Route path="/password-reset/:token" element={<PasswordConfirmation />} />
 
-                <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Navigate to="/login" />} />
-                <Route path="/week" element={curUser.id ? <Week /> : <Navigate to="/login" />} />
+                {/* <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Navigate to="/login" />} />
+                <Route path="/week" element={curUser.id ? <Week /> : <Navigate to="/login" />} /> */}
+
+                <Route path="/" element={curUser.id ? <Calendar /> : <Navigate to="/login" />} />
 
                 <Route path="/create_calendar" element={curUser.id ? <CreateCalendar /> : <Navigate to="/login" />} />
                 <Route path="/create_event" element={curUser.id ? <CreateEvent /> : <Navigate to="/login" />} />
@@ -86,6 +92,17 @@ function App() {
             </Routes>
         </Router>
     );
+}
+
+function Calendar() {
+    const curCalendars = useSelector((state) => state.calendars);
+
+    switch(curCalendars.representation) {
+        case "month":
+            return <Month />; 
+        default:
+            return <Week />; 
+    }
 }
 
 export default App;

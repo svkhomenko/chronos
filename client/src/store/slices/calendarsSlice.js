@@ -4,7 +4,9 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     calendars: [],
     scrollToY: 0,
-    message: ''
+    message: '',
+    curDate: new Date(),
+    representation: "week"
 }
 
 export const calendarsSlice = createSlice({
@@ -28,10 +30,22 @@ export const calendarsSlice = createSlice({
         },
         removeMessage(state) {
             state.message = '';
+        },
+        setCurDate: (state, action) => {
+            state.curDate = action.payload.curDate;
+        },
+        removeCurDate(state) {
+            state.curDate = new Date();
+        },
+        setRepresentation: (state, action) => {
+            state.representation = action.payload.representation;
+        },
+        removeRepresentation(state) {
+            state.representation = "week";
         }
     }
 });
 
-export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY, setMessage, removeMessage } = calendarsSlice.actions;
+export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY, setMessage, removeMessage, setCurDate, removeCurDate, setRepresentation, removeRepresentation } = calendarsSlice.actions;
 export default calendarsSlice.reducer;
 

@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 require('./token/deleteTokens')();
+require('./reminders')();
 
 const authRouter = require("./routes/auth_router.js");
 const usersRouter = require("./routes/users_router.js");

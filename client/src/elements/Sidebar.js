@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import Select from 'react-select';
+import TextField from '@mui/material/TextField';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import { setCalendars } from '../store/slices/calendarsSlice';
+import { setCalendars, setCurDate, setRepresentation } from '../store/slices/calendarsSlice';
 import PopUpGetCalendarInfo from "../popups/PopUpGetCalendarInfo";
 import { SERVER_URL } from "../const";
+import moment from 'moment';
+
 
 function Sidebar() {
     const curUser = useSelector((state) => state.user);
@@ -60,6 +67,11 @@ function Sidebar() {
         });
     }, []);
 
+    const representationOptions = [
+        { value: 'week', label: 'Week' },
+        { value: 'month', label: 'Month' }
+    ];
+
     return (
         <div>
             {
@@ -81,8 +93,35 @@ function Sidebar() {
                     </div>
                 ))
             }
+
             <Link to={'/create_event'}>Create event</Link>
             <Link to={'/create_calendar'}>Create calendar</Link>
+
+            <div>
+                <div onClick={goBack}>
+                    <iconify-icon icon="material-symbols:arrow-back-ios-rounded" />
+                </div>
+                <div onClick={goForward}>
+                    <iconify-icon icon="material-symbols:arrow-forward-ios-rounded" />
+                </div>
+            </div>
+
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                    label="Responsive"
+                    openTo="day"
+                    views={['year', 'month', 'day']}
+                    value={curCalendars.curDate}
+                    onChange={changeCurDate}
+                    renderInput={(params) => <TextField {...params} />}
+                />
+            </LocalizationProvider>
+
+            <div className='status_select_contatiner'>
+                <div className='label'>Representation:</div>
+                <Select value={getRepresentationValue()} options={representationOptions} 
+                        onChange={handleChangeRepresentation} className='status_select' classNamePrefix='status_select' />
+            </div>
         </div>
     );
     
@@ -100,6 +139,30 @@ function Sidebar() {
                 }
             }) 
         }));
+        window.location.reload();
+    }
+
+    function changeCurDate(date) {
+        dispatch(setCurDate({ 
+            curDate: date
+        }));
+        window.location.reload();
+    }
+
+    function goBack() {
+        changeCurDate(moment(curCalendars.curDate).subtract(1, "weeks"));
+    }
+    
+    function goForward() {
+        changeCurDate(moment(curCalendars.curDate).add(1, "weeks"));
+    }
+
+    function getRepresentationValue() {
+        return representationOptions.find(option => option.value == curCalendars.representation);
+    }
+
+    function handleChangeRepresentation(event) {
+        dispatch(setRepresentation({ representation: event.value }));
         window.location.reload();
     }
 }

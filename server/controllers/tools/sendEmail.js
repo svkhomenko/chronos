@@ -52,9 +52,21 @@ async function sendEmailForPasswordConfirmation(link, email, login) {
     sendEmail(email, subject, text, html);
 }
 
+async function sendEmailForReminder(email, login, event) {
+    let date = new Date(event.date_from);
+    date = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+    const subject = 'Reminder from Chronos';
+    const text = `Hi ${login}! You scheduled an event ${event.name} for ${date}`;
+    const html = `Hi ${login}!<br>You scheduled an event <b>${event.name}</b> for <b>${date}</b>`;
+
+    sendEmail(email, subject, text, html);
+}
+
 module.exports = {
     sendEmail,
     sendEmailForEmailConfirmation,
-    sendEmailForPasswordConfirmation
+    sendEmailForPasswordConfirmation,
+    sendEmailForReminder
 };
 
