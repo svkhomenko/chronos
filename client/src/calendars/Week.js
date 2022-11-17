@@ -7,8 +7,7 @@ import { Rnd } from 'react-rnd';
 import { SERVER_URL } from "../const";
 import PopUpCreateEvent from "../popups/PopUpCreateEvent";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
-import { fillArray, getHolidaysOnDate, isAllDay, updateEvent } from "./calendars_tools";
-import isoToGcalDescription from "../tools/isoToGcalDescription";
+import { fillArray, getHolidaysOnDate, isAllDay, getAllDayEvents, getEventColor, updateEvent } from "./calendars_tools";
 
 function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -98,7 +97,7 @@ function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, ha
     }
 }
 
-function Week() {
+function Week({ holidays, widthTD, heightTD }) {
     const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
@@ -113,63 +112,14 @@ function Week() {
     const days = fillArray(7);
 
     const [week, setWeek] = useState(getDates());
-    const [holidays, setHolidays] = useState([]);
     const [events, setEvents] = useState([]);
-    
-    const [widthTD, setWidthTD] = useState(300);
-    const [heightTD, setHeightTD] = useState(100);
 
     useEffect(() => {
         if (curCalendars.scrollToY) {
             window.scrollTo(0, curCalendars.scrollToY);
             dispatch(removeScrollToY());
         }
-    });
-
-    useEffect(() => {
-        const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
-        const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY = "holiday@group.v.calendar.google.com";
-        const API_KEY = "AIzaSyD3exYUMZ-2Aa1rXAPVTH4SFAqx5iqkdqs";
-        let CALENDAR_REGION = "en.ukrainian";
-
-        fetch('http://ip-api.com/json/')
-        .then(response => {
-            if (!response.ok) {
-                throw response;
-            }
-            return response.json();
-        })
-        .then(data => {
-            CALENDAR_REGION = "en." + isoToGcalDescription[data.countryCode.toLowerCase()];
-        })
-        .then(() => {
-            const url = `${BASE_CALENDAR_URL}/${CALENDAR_REGION}%23${BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY}/events?key=${API_KEY}`
-            fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw response;
-                }
-                return response.json();
-            })
-            .then(data => {
-                setHolidays(data.items);
-            })
-            .catch(err => {
-                console.log("err", err);
-            });
-        })
-        .catch(err => {
-            console.log("err", err);
-        });
     }, []);
-
-    useEffect(() => {
-        setNewSizes();
-    }, []);
-    
-    window.addEventListener('resize', (e) => {
-        setNewSizes();
-    });
 
     useEffect(() => {
         fetch(SERVER_URL + `/api/events?` + new URLSearchParams(
@@ -231,10 +181,10 @@ function Week() {
                                         holiday.summary
                                     ))}----
                                     {moment(new Date(date)).isoWeek()}---
-                                    {getAllDayEvents(date).map(event => (
+                                    {getAllDayEvents(date, events).map(event => (
                                         <RndHeaderEvent key={event.id}
                                                         event={event}
-                                                        styleColor={getEventColor(event)}
+                                                        styleColor={getEventColor(event, curCalendars.calendars)}
                                                         size={getEventSize(event)}
                                                         handleDragStop={handleDragStop}
                                                         openEventPopup={openEventPopup} />
@@ -264,7 +214,7 @@ function Week() {
                                                                     <RndEvent key={event.id + '-' + index} 
                                                                             event={event}
                                                                             stylePosition={getStylePosition(event)}
-                                                                            styleColor={getEventColor(event)}
+                                                                            styleColor={getEventColor(event, curCalendars.calendars)}
                                                                             size={getEventSize(event)}
                                                                             handleResizeStop={handleResizeStop}
                                                                             handleDragStop={handleDragStop}
@@ -296,27 +246,6 @@ function Week() {
         </div>
     );
 
-    function getEventColor(event) {
-        if (event.color) {
-            return { backgroundColor: event.color };
-        }
-        
-        const calendar = curCalendars.calendars.find(calendar => calendar.id == event.calendarId);
-        return { backgroundColor: calendar[`${event.category}Color`] };
-    }
-
-    function getAllDayEvents(date) {
-        return events.filter(event => {
-            if (!isAllDay(event)) {
-                return false;
-            }
-
-            let start = moment(new Date(event.dateFrom)).startOf('day').toDate();
-            date = moment(new Date(date)).startOf('day').toDate();
-            return date - start == 0;
-        });
-    }
-
     function getDates() {
         let start = moment(curCalendars.curDate).startOf('isoWeek').startOf('day');
         let week = [];
@@ -327,16 +256,8 @@ function Week() {
         return week;
     }
 
-    function setNewSizes() {
-        let td = document.querySelector('td');
-        if (td) {
-            setWidthTD(td.getBoundingClientRect().width);
-            setHeightTD(td.getBoundingClientRect().height);
-        }
-    }
-
     function createEvent(event) {
-        if (event.target.tagName == 'TD') {
+        if (event.target.tagName == 'TD' && event.target.dataset.week) {
             setDateForPopupCreateEvent(moment(new Date(event.target.dataset.week)).add(event.target.dataset.time,'hours'));
             setIsPopUpCreateEventOpen(true);
         }

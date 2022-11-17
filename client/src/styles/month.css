@@ -1,0 +1,42 @@
+@import './_vars.css';
+
+.month table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.month td,
+.month th {
+    width: 2%;
+    height: 50px;
+    border: 1px solid var(--grey-color);
+    box-sizing: border-box;
+}
+
+.month td {
+    height: 150px;
+}
+
+.month .event_rnd {
+    border: 1px solid blue;
+}
+
+.month .header_event {
+    position: relative;
+    min-height: 20px;
+}
+
+/* .month td#td0 {
+    position: relative;
+}
+
+.month td.half_hour {
+    width: 10px;
+}
+
+.month .event {
+    position: absolute;
+}
+ */
+

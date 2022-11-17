@@ -16,8 +16,7 @@ import Header from "./elements/Header";
 import Sidebar from "./elements/Sidebar";
 import Message from "./popups/Message";
 
-import Week from "./calendars/Week";
-import Month from "./calendars/Month";
+import Calendar from "./calendars/Calendar";
 
 import CreateCalendar from "./calendars/CreateCalendar";
 import CreateEvent from "./calendars/CreateEvent";
@@ -92,17 +91,6 @@ function App() {
             </Routes>
         </Router>
     );
-}
-
-function Calendar() {
-    const curCalendars = useSelector((state) => state.calendars);
-
-    switch(curCalendars.representation) {
-        case "month":
-            return <Month />; 
-        default:
-            return <Week />; 
-    }
 }
 
 export default App;

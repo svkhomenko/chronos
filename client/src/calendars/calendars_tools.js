@@ -27,6 +27,27 @@ function isAllDay(event) {
             && moment(day).endOf('days').format('llll') == moment(new Date(event.dateTo)).format('llll');
 }
 
+function getAllDayEvents(date, events) {
+    return events.filter(event => {
+        if (!isAllDay(event)) {
+            return false;
+        }
+
+        let start = moment(new Date(event.dateFrom)).startOf('day').toDate();
+        date = moment(new Date(date)).startOf('day').toDate();
+        return date - start == 0;
+    });
+}
+
+function getEventColor(event, calendars) {
+    if (event.color) {
+        return { backgroundColor: event.color };
+    }
+    
+    const calendar = calendars.find(calendar => calendar.id == event.calendarId);
+    return { backgroundColor: calendar[`${event.category}Color`] };
+}
+
 function updateEvent(eventId, body, curUser, successFunction, deleteUser) {
     fetch(SERVER_URL + `/api/events/${eventId}}`, {
         method: 'PATCH',
@@ -90,6 +111,8 @@ export {
     fillArray,
     getHolidaysOnDate,
     isAllDay,
+    getAllDayEvents,
+    getEventColor,
     updateEvent,
     deleteEvent
 };

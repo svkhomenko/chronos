@@ -12,7 +12,6 @@ import PopUpGetCalendarInfo from "../popups/PopUpGetCalendarInfo";
 import { SERVER_URL } from "../const";
 import moment from 'moment';
 
-
 function Sidebar() {
     const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);

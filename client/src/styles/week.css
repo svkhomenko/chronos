@@ -3,10 +3,6 @@
 .week table {
     width: 100%;
     border-collapse: collapse;
-    /* width: 50px;
-    height: 50px;
-    border: 1px solid red; */
-
     table-layout: fixed;
 }
 
@@ -36,7 +32,6 @@
 }
 
 .week .event_rnd {
-    background-color: red;
     border: 1px solid blue;
 }
 

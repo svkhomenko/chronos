@@ -5,6 +5,7 @@ import { setScrollToY, setMessage } from '../store/slices/calendarsSlice';
 import PopUpSure from "./PopUpSure";
 import UpdateEvent from "../calendars/UpdateEvent";
 import { deleteEvent } from "../calendars/calendars_tools";
+import { getDateString } from "../tools/tools_func";
 
 function PopUpGetEventInfo({ curEvent, setIsPopUpOpen }) {
     const curUser = useSelector((state) => state.user);
@@ -51,7 +52,7 @@ function PopUpGetEventInfo({ curEvent, setIsPopUpOpen }) {
                             </button>
                             <div>{curEvent.name}</div>
                             <div>{curEvent.description}</div>
-                            <div>{curEvent.dateFrom}{' - '}{curEvent.dateTo}</div>
+                            <div>{getDateString(curEvent.dateFrom)}{' - '}{getDateString(curEvent.dateTo)}</div>
                             <div>{curEvent.category}</div>
                             <div>{curEvent.color}</div>
                             <div>{getCalendar().name}</div>                        
