@@ -15,6 +15,10 @@
     z-index: 1100;
 }
 
+.popup_background.more_events {
+    z-index: 799;
+}
+
 .popup_container {
     z-index: 1099;
     position: fixed;
@@ -31,6 +35,10 @@
 
 .popup_container.sure {
     z-index: 1100;
+}
+
+.popup_container.more_events {
+    z-index: 800;
 }
 
 .popup_message {

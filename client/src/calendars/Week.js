@@ -180,7 +180,6 @@ function Week({ holidays, widthTD, heightTD }) {
                                     {getHolidaysOnDate(date, holidays).map(holiday => (
                                         holiday.summary
                                     ))}----
-                                    {moment(new Date(date)).isoWeek()}---
                                     {getAllDayEvents(date, events).map(event => (
                                         <RndHeaderEvent key={event.id}
                                                         event={event}
@@ -247,7 +246,7 @@ function Week({ holidays, widthTD, heightTD }) {
     );
 
     function getDates() {
-        let start = moment(curCalendars.curDate).startOf('isoWeek').startOf('day');
+        let start = moment(new Date(curCalendars.curDate)).startOf('isoWeek').startOf('day');
         let week = [];
         for (let i = 0; i < 7; i++) {
             week.push(start.format('llll'));

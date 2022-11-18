@@ -36,7 +36,7 @@ module.exports = function initUser(sequelize) {
         profile_picture: {
             type: DataTypes.VIRTUAL,
             get() {
-                let fileName = this.getDataValue("picturePath");
+                let fileName = this.getDataValue("picture_path");
 
                 if (fileName) {
                     const filePath = path.resolve("uploads", fileName);

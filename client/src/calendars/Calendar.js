@@ -1,17 +1,98 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCalendars } from '../store/slices/calendarsSlice';
+import { SERVER_URL } from "../const";
 import isoToGcalDescription from "../tools/isoToGcalDescription";
 
+import Sidebar from "../elements/Sidebar";
 import Week from "./Week";
 import Month from "./Month";
 
 function Calendar() {
+    const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
+    const dispatch = useDispatch();
 
     const [holidays, setHolidays] = useState([]);
 
     const [widthTD, setWidthTD] = useState(300);
     const [heightTD, setHeightTD] = useState(100);
+
+    useEffect(() => {
+        fetch(SERVER_URL + `/api/calendars`, 
+        {
+            method: 'GET',
+            headers: {
+                'authorization': curUser.token
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw response;
+            }
+            return response.json();
+        })
+        // .then((data) => {
+        //     let activeCalendar = curCalendars.calendars.filter(calendar => calendar.active);
+        //     if (activeCalendar.length == 0) {
+        //         dispatch(setCalendars({ 
+        //             calendars: data.map(calendar => ({
+        //                 ...calendar,
+        //                 active: calendar.status == "main"
+        //             })) 
+        //         }));
+        //     }
+        //     else {
+        //         dispatch(setCalendars({ 
+        //             calendars: data.map(calendar => ({
+        //                 ...calendar,
+        //                 active: !!(activeCalendar.find(c => c.id == calendar.id))
+        //             })) 
+        //         }));
+        //     }
+        // })
+        .then((data) => {
+            let activeCalendar = curCalendars.calendars.filter(calendar => calendar.active);
+            let calendars = [];
+            if (activeCalendar.length == 0) {
+                calendars = data.map(calendar => ({
+                    ...calendar,
+                    active: calendar.status == "main"
+                }));
+            }
+            else {
+                calendars = data.map(calendar => ({
+                    ...calendar,
+                    active: !!(activeCalendar.find(c => c.id == calendar.id))
+                }));
+            }
+
+            calendars.sort((a, b) => {
+                if (a.status == "main") {
+                    return -1;
+                }
+                if (a.userRole == "admin" && b.userRole == "user") {
+                    return -1;
+                }
+                return 0;
+            });
+
+            dispatch(setCalendars({ 
+                calendars: calendars
+            }));
+        })
+        .catch((err) => {
+            console.log('err', err, err.body);
+            switch(err.status) {
+                case 401:
+                    dispatch(removeUser());
+                    window.location.href = '/login';
+                    break;
+                default:
+                    window.location.href = '/error';
+            }
+        });
+    }, []);
 
     useEffect(() => {
         const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
@@ -60,9 +141,15 @@ function Calendar() {
 
     switch(curCalendars.representation) {
         case "month":
-            return <Month holidays={holidays} widthTD={widthTD} heightTD={heightTD} />; 
+            return (<>
+                <Sidebar />
+                <Month holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+            </>);
         default:
-            return <Week holidays={holidays} widthTD={widthTD} heightTD={heightTD} />; 
+            return (<>
+                <Sidebar />
+                <Week holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+            </>);
     }
 
     function setNewSizes() {

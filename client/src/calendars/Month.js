@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import { setScrollToY, removeScrollToY } from '../store/slices/calendarsSlice';
+import { setScrollToY, removeScrollToY, setCurDate, setRepresentation } from '../store/slices/calendarsSlice';
 import moment from 'moment';
 import { Rnd } from 'react-rnd';
 import { SERVER_URL } from "../const";
 import PopUpCreateEvent from "../popups/PopUpCreateEvent";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
-import { fillArray, getHolidaysOnDate, isAllDay, getAllDayEvents, getEventColor, updateEvent } from "./calendars_tools";
+import PopUpMoreEvents from "../popups/PopUpMoreEvents";
+import { fillArray, getHolidaysOnDate, isAllDay, getEventColor, updateEvent } from "./calendars_tools";
 
 function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -49,6 +50,40 @@ function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopu
         setTimeout(() => {
             setIsDragging(true);
         }, 200);
+    }
+}
+
+function EventsForDay({ events, date, holidaysNumder, getEventColor, widthTD, handleDragStop, openEventPopup }) {
+    const curCalendars = useSelector((state) => state.calendars);
+    const maxEvents = 3 - holidaysNumder;
+
+    const [isPopUpMoreEventsOpen, setIsPopUpMoreEventsOpen] = useState(false);
+
+    return (
+        <>
+            {
+                isPopUpMoreEventsOpen &&
+                <PopUpMoreEvents events={events} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
+            }
+            {(events.slice(0, maxEvents)).map(event => (
+                <RndHeaderEvent key={event.id}
+                            event={event}
+                            styleColor={getEventColor(event, curCalendars.calendars)}
+                            size={{width: widthTD}}
+                            handleDragStop={handleDragStop}
+                            openEventPopup={openEventPopup} />
+            ))}
+            {
+                events.length > maxEvents &&
+                <div onClick={showMoreEvents} className='more_events'>
+                    {`${events.length - maxEvents} more event${events.length == maxEvents + 1 ? '' : 's'}`}
+                </div>
+            }
+        </>
+    );
+
+    function showMoreEvents() {
+        setIsPopUpMoreEventsOpen(true);
     }
 }
 
@@ -135,32 +170,27 @@ function Month({ holidays, widthTD, heightTD }) {
                 <tbody onClick={createEvent}>
                     {rows.map(row => (
                         <tr key={row}>
-                            {(month.slice(row * 7, (row + 1) * 7)).map(date => (
-                                <td key={date} data-date={date}>
-                                    {date}----
-                                    {getHolidaysOnDate(date, holidays).map(holiday => (
-                                        holiday.summary
-                                    ))}----
-                                    {/* {getAllDayEvents(date, events).map(event => (
-                                        <RndHeaderEvent key={event.id}
-                                                        event={event}
-                                                        styleColor={getEventColor(event, curCalendars.calendars)}
-                                                        size={{width: widthTD}}
-                                                        handleDragStop={handleDragStop}
-                                                        openEventPopup={openEventPopup} />
-                                    ))}---- */}
-                                    {                                                       
-                                        getEventsForThisDay(date).map(event => (
-                                            <RndHeaderEvent key={event.id}
-                                                        event={event}
-                                                        styleColor={getEventColor(event, curCalendars.calendars)}
-                                                        size={{width: widthTD}}
-                                                        handleDragStop={handleDragStop}
-                                                        openEventPopup={openEventPopup} />
-                                        ))
-                                    }
-                                </td>
-                            ))}
+                            {(month.slice(row * 7, (row + 1) * 7)).map(date => {
+                                let hols = getHolidaysOnDate(date, holidays);
+                                return (
+                                    <td key={date} data-date={date}>
+                                        <div onClick={() => {showThatDayOnWeek(date)}}>
+                                            {moment(new Date(date)).format('D MMM')}
+                                        </div>
+                                        ----
+                                        {hols.map(holiday => (
+                                            holiday.summary
+                                        ))}----   
+                                        <EventsForDay events={getEventsForThisDay(date)}
+                                                    date={date}
+                                                    holidaysNumder={hols.length}
+                                                    getEventColor={getEventColor}
+                                                    widthTD={widthTD}
+                                                    handleDragStop={handleDragStop}
+                                                    openEventPopup={openEventPopup} />                                                  
+                                    </td>
+                                );
+                            })}
                         </tr>
                     ))}
                 </tbody>
@@ -169,8 +199,8 @@ function Month({ holidays, widthTD, heightTD }) {
     );
 
     function getDates() {
-        let start = moment(curCalendars.curDate).startOf('month').startOf('isoWeek').startOf('day');
-        let end = moment(curCalendars.curDate).endOf('month').endOf('isoWeek').startOf('day');
+        let start = moment(new Date(curCalendars.curDate)).startOf('month').startOf('isoWeek').startOf('day');
+        let end = moment(new Date(curCalendars.curDate)).endOf('month').endOf('isoWeek').startOf('day');
         let month = [];
         while (!start.isAfter(end)) {
             month.push(start.format('llll'));
@@ -241,7 +271,7 @@ function Month({ holidays, widthTD, heightTD }) {
 
     function getEventsForThisDay(date) {
         date = moment(new Date(date));
-        return events.filter(event => {
+        let ev = events.filter(event => {
             let dateFrom = moment(new Date(event.dateFrom));
             if (event.category == 'arrangement') {
                 let dateTo = moment(new Date(event.dateTo));
@@ -251,6 +281,23 @@ function Month({ holidays, widthTD, heightTD }) {
                 return date.isSame(dateFrom, "day");
             }
         });
+
+        ev.sort((a, b) => {
+            let categories = {
+                'arrangement': 0,
+                'task': 1,
+                'reminder': 2
+            }
+            if (a.category !== b.category) {
+                return categories[b.category] - categories[a.category];
+            }
+            if (isAllDay(a) && !isAllDay(b)) {
+                return -1;
+            }
+            return 0;
+        });
+
+        return ev;
     }
 
     function createEvent(event) {
@@ -258,6 +305,14 @@ function Month({ holidays, widthTD, heightTD }) {
             setDateForPopupCreateEvent(moment(new Date(event.target.dataset.date)));
             setIsPopUpCreateEventOpen(true);
         }
+    }
+
+    function showThatDayOnWeek(date) {
+        dispatch(setRepresentation({ representation: 'week' }));
+        dispatch(setCurDate({ 
+            curDate: moment(new Date(date))
+        }));
+        window.location.reload();
     }
 }
 

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, removeUser } from './store/slices/userSlice';
-import { removeCurDate, removeRepresentation } from './store/slices/calendarsSlice';
+import { removeCalendars, removeCurDate, removeRepresentation } from './store/slices/calendarsSlice';
 import { SERVER_URL } from "./const";
 import "./styles/main.css";
 
@@ -12,8 +12,9 @@ import EmailConfirmation from "./auth/EmailConfirmation";
 import SendPasswordConfirmation from "./auth/SendPasswordConfirmation";
 import PasswordConfirmation from "./auth/PasswordConfirmation";
 
+import ProfilePage from "./users/ProfilePage";
+
 import Header from "./elements/Header";
-import Sidebar from "./elements/Sidebar";
 import Message from "./popups/Message";
 
 import Calendar from "./calendars/Calendar";
@@ -42,6 +43,7 @@ function App() {
                     return response.json();
                 }
                 dispatch(removeUser());
+                dispatch(removeCalendars());
                 dispatch(removeCurDate());
                 dispatch(removeRepresentation());
             })
@@ -59,15 +61,17 @@ function App() {
                 }
             });
         }
+        else  {
+            dispatch(removeUser());
+            dispatch(removeCalendars());
+            dispatch(removeCurDate());
+            dispatch(removeRepresentation());
+        }
     }, []);
 
     return (
         <Router>
             <Header />
-
-            {
-                curUser.id && <Sidebar />
-            }
 
             <Message />
             
@@ -78,10 +82,10 @@ function App() {
                 <Route path="/password-reset" element={<SendPasswordConfirmation />} />
                 <Route path="/password-reset/:token" element={<PasswordConfirmation />} />
 
-                {/* <Route path="/" element={curUser.id ? <Navigate to="/week" /> : <Navigate to="/login" />} />
-                <Route path="/week" element={curUser.id ? <Week /> : <Navigate to="/login" />} /> */}
+                <Route path="/profile" element={curUser.id ? <ProfilePage /> : <Navigate to="/login" />} />
 
                 <Route path="/" element={curUser.id ? <Calendar /> : <Navigate to="/login" />} />
+                {/* <Route path="/" element={<Calendar />} /> */}
 
                 <Route path="/create_calendar" element={curUser.id ? <CreateCalendar /> : <Navigate to="/login" />} />
                 <Route path="/create_event" element={curUser.id ? <CreateEvent /> : <Navigate to="/login" />} />

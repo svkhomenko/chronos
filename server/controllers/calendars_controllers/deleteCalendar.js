@@ -13,6 +13,14 @@ async function deleteCalendar(req, res) {
 
     try {
         const decoded = await verifyJWTToken(token, process.env.SECRET);
+
+        const curCalendar = await Calendar.findByPk(calendarId);
+        if (!curCalendar) {
+            throw new ValidationError("No such calendar", 404); 
+        }
+        if (curCalendar.status == 'main') {
+            throw new ValidationError("You can not delete main calendar", 403); 
+        }
     
         if (forAll) {
             const curUserCalendar = await UserCalendar.findOne({

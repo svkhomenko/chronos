@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 import TextField from '@mui/material/TextField';
@@ -6,65 +6,16 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeUser } from '../store/slices/userSlice';
-import { setCalendars, setCurDate, setRepresentation } from '../store/slices/calendarsSlice';
+import { setCalendars, setCurDate, removeCurDate, setRepresentation } from '../store/slices/calendarsSlice';
 import PopUpGetCalendarInfo from "../popups/PopUpGetCalendarInfo";
-import { SERVER_URL } from "../const";
 import moment from 'moment';
 
 function Sidebar() {
-    const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
 
     const [isPopUpGetCalendarInfoOpen, setIsPopUpGetCalendarInfoOpen] = useState(false);
     const [calendarForPopupGetCalendarInfo, setCalendarForPopupGetCalendarInfo] = useState();
-
-    useEffect(() => {
-        fetch(SERVER_URL + `/api/calendars`, 
-        {
-            method: 'GET',
-            headers: {
-                'authorization': curUser.token
-            }
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw response;
-            }
-            return response.json();
-        })
-        .then((data) => {
-            let activeCalendar = curCalendars.calendars.filter(calendar => calendar.active);
-            if (activeCalendar.length == 0) {
-                dispatch(setCalendars({ 
-                    calendars: data.map(calendar => ({
-                        ...calendar,
-                        active: calendar.status == "main"
-                    })) 
-                }));
-            }
-            else {
-                dispatch(setCalendars({ 
-                    calendars: data.map(calendar => ({
-                        ...calendar,
-                        active: !!(activeCalendar.find(c => c.id == calendar.id))
-                    })) 
-                }));
-            }
-        })
-        .catch((err) => {
-            console.log('err', err, err.body);
-            switch(err.status) {
-                case 401:
-                    dispatch(removeUser());
-                    window.location.href = '/login';
-                    break;
-                default:
-                    window.location.href = '/error';
-            }
-        });
-    }, []);
 
     const representationOptions = [
         { value: 'week', label: 'Week' },
@@ -93,8 +44,12 @@ function Sidebar() {
                 ))
             }
 
+            <div>{getHeader()}</div>
+
             <Link to={'/create_event'}>Create event</Link>
             <Link to={'/create_calendar'}>Create calendar</Link>
+
+            <button onClick={setCurDayToday}>Today</button>
 
             <div>
                 <div onClick={goBack}>
@@ -107,7 +62,6 @@ function Sidebar() {
 
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DatePicker
-                    label="Responsive"
                     openTo="day"
                     views={['year', 'month', 'day']}
                     value={curCalendars.curDate}
@@ -149,11 +103,37 @@ function Sidebar() {
     }
 
     function goBack() {
-        changeCurDate(moment(curCalendars.curDate).subtract(1, "weeks"));
+        let subtract;
+
+        switch(curCalendars.representation) {
+            case "month":
+                subtract = 'months'
+                break;
+            case "year":
+                subtract = 'years'
+                break;
+            default:
+                subtract = 'weeks'
+        }
+
+        changeCurDate(moment(curCalendars.curDate).subtract(1, subtract));
     }
     
     function goForward() {
-        changeCurDate(moment(curCalendars.curDate).add(1, "weeks"));
+        let add;
+
+        switch(curCalendars.representation) {
+            case "month":
+                add = 'months'
+                break;
+            case "year":
+                add = 'years'
+                break;
+            default:
+                add = 'weeks'
+        }
+
+        changeCurDate(moment(curCalendars.curDate).add(1, add));
     }
 
     function getRepresentationValue() {
@@ -162,6 +142,22 @@ function Sidebar() {
 
     function handleChangeRepresentation(event) {
         dispatch(setRepresentation({ representation: event.value }));
+        window.location.reload();
+    }
+
+    function getHeader() {
+        switch(curCalendars.representation) {
+            case "month":
+                return moment(new Date(curCalendars.curDate)).format('MMMM YYYY'); 
+            case "year":
+                return moment(new Date(curCalendars.curDate)).format('YYYY'); 
+            default:
+                return `Week ${moment(new Date(curCalendars.curDate)).format('W, YYYY')}`; 
+        }
+    }
+
+    function setCurDayToday() {
+        dispatch(removeCurDate());
         window.location.reload();
     }
 }

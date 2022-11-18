@@ -71,10 +71,13 @@ function PopUpGetCalendarInfo({ calendar, setIsPopUpOpen }) {
                     {
                         isUpdating
                         ? <UpdateCalendar calendar={calendar} setIsUpdating={setIsUpdating} />
-                        : <div className='post_card no_hr user_form'> 
-                            <div onClick={() => {setIsPopUpSureOpen(true)}}>
-                                <iconify-icon icon="material-symbols:delete-rounded"/>
-                            </div>
+                        : <div className='post_card no_hr user_form'>
+                            {
+                                calendar.status != 'main' &&
+                                <div onClick={() => {setIsPopUpSureOpen(true)}}>
+                                    <iconify-icon icon="material-symbols:delete-rounded"/>
+                                </div>
+                            }
                             {
                                 calendar.userRole == 'admin' &&
                                 <button onClick={() => {setIsUpdating(true)}}>

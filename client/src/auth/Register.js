@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setMessage } from '../store/slices/calendarsSlice';
 import { checkPasswordConfirmation, validatePassword, validateLogin, validateFullName, validateEmail } from "../tools/dataValidation";
 import { SERVER_URL, CLIENT_URL } from "../const";
 
 function Register() {
+    const dispatch = useDispatch();
+
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [email, setEmail] = useState('');
     const [fullName, setFullName] = useState('');
 
-    const [mainMessage, setMainMessage] = useState('');
     const [loginMessage, setLoginMessage] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
     const [passwordConfirmationMessage, setPasswordConfirmationMessage] = useState('');
@@ -21,7 +24,6 @@ function Register() {
         <div className='display_center'>
             <div className='post_card no_hr user_form'>
                 <h2>Register</h2>
-                <div className='message success'>{mainMessage}</div>
                 <form onSubmit={handleSubmit}>
                     <div className='label'>Login:</div>
                     <div className='message error'>{loginMessage}</div>
@@ -78,7 +80,6 @@ function Register() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        setMainMessage('');
         setLoginMessage('');
         setPasswordMessage('');
         setPasswordConfirmationMessage('');
@@ -105,7 +106,7 @@ function Register() {
                     throw response;
                 }
                 else {
-                    setMainMessage('User was successfully created');
+                    dispatch(setMessage({ message: "User was successfully created" }));
                     setLogin('');
                     setPassword('');
                     setPasswordConfirmation('');
