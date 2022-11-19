@@ -22,7 +22,6 @@
 .popup_container {
     z-index: 1099;
     position: fixed;
-    display: flex;
     width: 600px;
     height: 540px;
     overflow-x: auto;

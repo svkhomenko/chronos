@@ -74,13 +74,20 @@ async function uploadUserData(req, res) {
         await validateNewEmail(email, decoded.id);
 
         if (email) {
+            let isNewEmail = false;
+            if (curUser.email != email) {
+                isNewEmail = true;
+            }
+
             curUser.set({
                 email
             });
 
             curUser = await curUser.save();
 
-            await sendEmailForEmailConfirmation(link, curUser.email, curUser.login);
+            if (isNewEmail) {
+                await sendEmailForEmailConfirmation(link, curUser.email, curUser.login);
+            }
         }
 
         if (login) {

@@ -32,25 +32,6 @@ function Calendar() {
             }
             return response.json();
         })
-        // .then((data) => {
-        //     let activeCalendar = curCalendars.calendars.filter(calendar => calendar.active);
-        //     if (activeCalendar.length == 0) {
-        //         dispatch(setCalendars({ 
-        //             calendars: data.map(calendar => ({
-        //                 ...calendar,
-        //                 active: calendar.status == "main"
-        //             })) 
-        //         }));
-        //     }
-        //     else {
-        //         dispatch(setCalendars({ 
-        //             calendars: data.map(calendar => ({
-        //                 ...calendar,
-        //                 active: !!(activeCalendar.find(c => c.id == calendar.id))
-        //             })) 
-        //         }));
-        //     }
-        // })
         .then((data) => {
             let activeCalendar = curCalendars.calendars.filter(calendar => calendar.active);
             let calendars = [];
@@ -76,6 +57,8 @@ function Calendar() {
                 }
                 return 0;
             });
+
+            console.log(calendars);
 
             dispatch(setCalendars({ 
                 calendars: calendars

@@ -4,6 +4,8 @@ import { removeUser } from '../store/slices/userSlice';
 import { setScrollToY, setMessage } from '../store/slices/calendarsSlice';
 import PopUpSure from "./PopUpSure";
 import UpdateCalendar from "../calendars/UpdateCalendar";
+import PopUpInviteFriends from "../users/PopUpInviteFriends";
+import { getSrc, getAvatar } from "../tools/tools_func";
 import { SERVER_URL } from "../const";
 
 function PopUpGetCalendarInfo({ calendar, setIsPopUpOpen }) {
@@ -12,6 +14,8 @@ function PopUpGetCalendarInfo({ calendar, setIsPopUpOpen }) {
 
     const [isPopUpSureOpen, setIsPopUpSureOpen] = useState(false);
     const [isSure, setIsSure] = useState(false);
+
+    const [isPopUpInviteOpen, setIsPopUpInviteOpen] = useState(false);
 
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -65,6 +69,10 @@ function PopUpGetCalendarInfo({ calendar, setIsPopUpOpen }) {
                 </>
                 
             }
+            {
+                isPopUpInviteOpen &&
+                <PopUpInviteFriends calendar={calendar} setIsPopUpOpen={setIsPopUpInviteOpen} />
+            }
             <div className="popup_background" onClick={() => {setIsPopUpOpen(false)}} />
             <div className="popup_container">
                 <div className='display_center'>
@@ -84,12 +92,37 @@ function PopUpGetCalendarInfo({ calendar, setIsPopUpOpen }) {
                                     <iconify-icon icon="material-symbols:edit"/>
                                 </button>
                             }
+                            {
+                                calendar.status != 'main' && calendar.userRole == 'admin' &&
+                                <div onClick={() => {setIsPopUpInviteOpen(true)}}>
+                                    <iconify-icon icon="mdi:invite"/>
+                                </div>
+                            }
                             <div>{calendar.name}</div>
                             <div>{calendar.description}</div>
                             <div>{calendar.arrangementColor}</div>
                             <div>{calendar.reminderColor}</div>
                             <div>{calendar.taskColor}</div>
                             <div>{calendar.status}</div>
+                            <div>
+                                {
+                                    calendar.users.map(user => (
+                                        <div key={user.id}>
+                                            <div className="user_icon_outer">
+                                                {
+                                                    user.profilePicture
+                                                    ? <img src={getSrc(user.profilePicture)} alt="avatar" />
+                                                    : <div className='initials'>
+                                                        {getAvatar(user.fullName)}
+                                                    </div>
+                                                }
+                                            </div>
+                                            {user.login}{' '}
+                                            {user.userRole}
+                                        </div>
+                                    ))
+                                }
+                            </div>
                         </div>
                     }
                 </div>

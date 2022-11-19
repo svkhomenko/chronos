@@ -12,8 +12,6 @@ import EmailConfirmation from "./auth/EmailConfirmation";
 import SendPasswordConfirmation from "./auth/SendPasswordConfirmation";
 import PasswordConfirmation from "./auth/PasswordConfirmation";
 
-import ProfilePage from "./users/ProfilePage";
-
 import Header from "./elements/Header";
 import Message from "./popups/Message";
 
@@ -82,10 +80,7 @@ function App() {
                 <Route path="/password-reset" element={<SendPasswordConfirmation />} />
                 <Route path="/password-reset/:token" element={<PasswordConfirmation />} />
 
-                <Route path="/profile" element={curUser.id ? <ProfilePage /> : <Navigate to="/login" />} />
-
                 <Route path="/" element={curUser.id ? <Calendar /> : <Navigate to="/login" />} />
-                {/* <Route path="/" element={<Calendar />} /> */}
 
                 <Route path="/create_calendar" element={curUser.id ? <CreateCalendar /> : <Navigate to="/login" />} />
                 <Route path="/create_event" element={curUser.id ? <CreateEvent /> : <Navigate to="/login" />} />

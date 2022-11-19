@@ -1,58 +1,53 @@
-import React from 'react';
-import { Link, NavLink } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
 import { getSrc, getAvatar } from "../tools/tools_func";
 import { SERVER_URL } from "../const";
+import PopUpProfile from '../users/PopUpProfile';
 
 function Header() {
     const curUser = useSelector((state) => state.user);
     const dispatch = useDispatch();
+
+    const [isPopUpProfileOpen, setIsPopUpProfileOpen] = useState(false);
     
     return (
-        <header> 
-            <h1><Link to={'/'}>Chronos</Link></h1>
-            {/* <div className='menu_bar'>
-                <NavLink to={'/'}
-                        className={() => (window.location.pathname == "/" || window.location.pathname.startsWith('/posts')) ? "active" : ""}>
-                    Posts
-                </NavLink>
-                <NavLink to={'/categories'}
-                        className={({ isActive }) => isActive ? "active" : ""}>
-                    Categories
-                </NavLink>
-                <NavLink to={'/users'} 
-                        className={({ isActive }) => isActive ? "active" : ""}>
-                    Users
-                </NavLink>
-            </div> */}
+        <>
             {
-                curUser.id 
-                ? <div className='header_buttons_container'>
-                    <button className="button first" onClick={logout}>Log out</button>
-                    <Link to={'/profile'} className="user_icon_container">
-                        <div className="user_icon_outer">
-                            {
-                                curUser.profilePicture
-                                ? <img src={getSrc(curUser.profilePicture)} alt="avatar" />
-                                : <div className='initials'>
-                                    {getAvatar(curUser.fullName)}
-                                </div>
-                            }
-                        </div>
-                        <span>{curUser.login}</span>
-                    </Link>
-                </div>
-                : <div className='header_buttons_container'>
-                    <Link to={'/register'} className="button negative first">
-                        Create account
-                    </Link>
-                    <Link to={'/login'} className="button">
-                        Log in
-                    </Link>
-                </div>
+                isPopUpProfileOpen &&
+                <PopUpProfile setIsPopUpOpen={setIsPopUpProfileOpen} />
             }
-        </header>
+            <header> 
+                <h1><Link to={'/'}>Chronos</Link></h1>
+                {
+                    curUser.id 
+                    ? <div className='header_buttons_container'>
+                        <button className="button first" onClick={logout}>Log out</button>
+                        <div onClick={() => {setIsPopUpProfileOpen(true)}} className="user_icon_container">
+                            <div className="user_icon_outer">
+                                {
+                                    curUser.profilePicture
+                                    ? <img src={getSrc(curUser.profilePicture)} alt="avatar" />
+                                    : <div className='initials'>
+                                        {getAvatar(curUser.fullName)}
+                                    </div>
+                                }
+                            </div>
+                            <span>{curUser.login}</span>
+                        </div>
+                    </div>
+                    : <div className='header_buttons_container'>
+                        <Link to={'/register'} className="button negative first">
+                            Create account
+                        </Link>
+                        <Link to={'/login'} className="button">
+                            Log in
+                        </Link>
+                    </div>
+                }
+            </header>
+        </>
     );
 
     function logout() {

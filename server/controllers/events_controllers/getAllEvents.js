@@ -48,15 +48,39 @@ async function getAllEvents(req, res) {
             if (!validFrom || !validTo) {
                 throw new ValidationError("FilterDate is invalid", 400);
             }
-            
+
             where = {
                 ...where,
-                date_from: {
-                    [Op.gte]: parseDate(dateFrom)
-                },
-                date_to: {
-                    [Op.lte]: parseDate(dateTo)
-                }
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            {
+                                date_from: {
+                                    [Op.gte]: parseDate(dateFrom)
+                                }
+                            },
+                            {
+                                date_from: {
+                                    [Op.lt]: parseDate(dateTo)
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        [Op.and]: [
+                            {
+                                date_to: {
+                                    [Op.gt]: parseDate(dateFrom)
+                                }
+                            },
+                            {
+                                date_to: {
+                                    [Op.lte]: parseDate(dateTo)
+                                }
+                            }
+                        ]
+                    }
+                ]
             };
         }
 

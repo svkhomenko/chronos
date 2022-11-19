@@ -342,7 +342,7 @@ function Week({ holidays, widthTD, heightTD }) {
                 dispatch(removeUser());
             });
     }
-
+    
     function splitEventsIntoDays(data) {
         let splitEvents = [];
 
@@ -371,24 +371,33 @@ function Week({ holidays, widthTD, heightTD }) {
             let dateFrom = moment(event.dateFrom);
             let dateTo = moment(event.dateTo);
             if (event.category == "arrangement") {
-                while (moment(dateFrom).startOf('days').format('llll') != moment(dateTo).startOf('days').format('llll')) {
-                    splitEvents.push({
-                        ...event,
-                        dateFrom: moment(dateFrom).format('llll'),
-                        dateTo: moment(dateFrom).endOf('days').format('llll')
-                    });
-    
+                while (!moment(dateFrom).isSame(moment(dateTo), "days")) {
+                    if (isNotAnotherWeek(dateFrom)) {
+                        splitEvents.push({
+                            ...event,
+                            dateFrom: moment(dateFrom).format('llll'),
+                            dateTo: moment(dateFrom).endOf('days').format('llll')
+                        });
+                    }
+                    
                     dateFrom = moment(dateFrom).add(1, "days").startOf('days');
                 }
             }
-            splitEvents.push({
-                ...event,
-                dateFrom: dateFrom.format('llll'),
-                dateTo: dateTo.format('llll')
-            });
+            if (isNotAnotherWeek(dateFrom)) {
+                splitEvents.push({
+                    ...event,
+                    dateFrom: dateFrom.format('llll'),
+                    dateTo: dateTo.format('llll')
+                });
+            }
         });
 
         return splitEvents;
+
+        function isNotAnotherWeek(dateFrom) {
+            return !(moment(dateFrom).isBefore(moment(new Date(week[0])), 'days') 
+                || moment(dateFrom).isAfter(moment(new Date(week[week.length - 1])), 'days'));
+        }
     }
 
     function openEventPopup(event) {
