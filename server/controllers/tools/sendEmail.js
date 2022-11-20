@@ -63,10 +63,19 @@ async function sendEmailForReminder(email, login, event) {
     sendEmail(email, subject, text, html);
 }
 
+async function sendEmailForInvite(email, login, inviter, calendar) {
+    const subject = 'Invite from Chronos';
+    const text = `Hi ${login}! ${inviter} invite you to ${calendar} calendar in Chronos`;
+    const html = `Hi ${login}!<br><b>${inviter}</b> invite you to <b>${calendar}</b> calendar in Chronos`;
+
+    sendEmail(email, subject, text, html);
+}
+
 module.exports = {
     sendEmail,
     sendEmailForEmailConfirmation,
     sendEmailForPasswordConfirmation,
-    sendEmailForReminder
+    sendEmailForReminder,
+    sendEmailForInvite
 };
 

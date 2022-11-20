@@ -6,8 +6,9 @@ import PopUpSure from "./PopUpSure";
 import UpdateEvent from "../calendars/UpdateEvent";
 import { deleteEvent } from "../calendars/calendars_tools";
 import { getDateString } from "../tools/tools_func";
+import { SERVER_URL } from "../const";
 
-function PopUpGetEventInfo({ curEvent, setIsPopUpOpen }) {
+function PopUpGetEventInfo({ curEvent, setCurEvent, setEvents, allEvents, setIsPopUpOpen }) {
     const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
@@ -44,18 +45,28 @@ function PopUpGetEventInfo({ curEvent, setIsPopUpOpen }) {
                         isUpdating
                         ? <UpdateEvent curEvent={curEvent} setIsUpdating={setIsUpdating} />
                         : <div className='post_card no_hr user_form'> 
-                            <div onClick={() => {setIsPopUpSureOpen(true)}}>
+                            <button onClick={() => {setIsPopUpSureOpen(true)}}>
                                 <iconify-icon icon="material-symbols:delete-rounded"/>
-                            </div>
+                            </button>
                             <button onClick={() => {setIsUpdating(true)}}>
                                 <iconify-icon icon="material-symbols:edit"/>
                             </button>
+                            {
+                                curEvent.category == "task" &&
+                                <button onClick={setCompleted}>
+                                    <iconify-icon icon="emojione-monotone:heavy-check-mark" />
+                                </button>
+                            }  
                             <div>{curEvent.name}</div>
                             <div>{curEvent.description}</div>
                             <div>{getDateString(curEvent.dateFrom)}{' - '}{getDateString(curEvent.dateTo)}</div>
                             <div>{curEvent.category}</div>
                             <div>{curEvent.color}</div>
-                            <div>{getCalendar().name}</div>                        
+                            <div>{getCalendar().name}</div>
+                            {
+                                curEvent.category == "task" &&
+                                <div>{'' + curEvent.completed}</div>                        
+                            }                      
                         </div>
                     }
                 </div>
@@ -65,6 +76,50 @@ function PopUpGetEventInfo({ curEvent, setIsPopUpOpen }) {
 
     function getCalendar() {
         return curCalendars.calendars.find(calendar => calendar.id == curEvent.calendarId);
+    }
+
+    function setCompleted() {
+        fetch(SERVER_URL + `/api/events/${curEvent.id}}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': curUser.token
+            },
+            body: JSON.stringify({
+                completed: !curEvent.completed
+            })
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw response;
+            }
+            
+            setEvents(allEvents.map(event => {
+                if (event.id != curEvent.id) {
+                    return event;
+                }
+                return ({
+                    ...event,
+                    completed: !curEvent.completed
+                });
+            }));
+            setCurEvent({
+                ...curEvent,
+                completed: !curEvent.completed
+            });
+        })
+        .catch((err) => {
+            console.log('err', err, err.body);
+            switch(err.status) {
+                case 401:
+                case 403:
+                    dispatch(removeUser());
+                    window.location.href = '/login';
+                    break;
+                default:
+                    window.location.href = '/error';
+            }
+        });
     }
 }
 

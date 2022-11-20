@@ -40,6 +40,11 @@ module.exports = function initEvent(sequelize) {
         },
         color: { 
             type: DataTypes.STRING(7)
+        },
+        completed: { 
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+            allowNull: false
         }
     },
     {

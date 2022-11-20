@@ -3,7 +3,7 @@ import moment from 'moment';
 import PopUpGetEventInfo from "./PopUpGetEventInfo";
 import { getDateString } from "../tools/tools_func";
 
-function PopUpMoreEvents({ events, date, setIsPopUpOpen }) {
+function PopUpMoreEvents({ events, setEvents, allEvents, date, setIsPopUpOpen }) {
     const [isPopUpGetEventInfoOpen, setIsPopUpGetEventInfoOpen] = useState(false);
     const [eventForPopupGetEventInfo, setEventForPopupGetEventInfo] = useState();
 
@@ -11,7 +11,7 @@ function PopUpMoreEvents({ events, date, setIsPopUpOpen }) {
         <>
             {
                 isPopUpGetEventInfoOpen &&
-                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
+                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setCurEvent={setEventForPopupGetEventInfo} setEvents={setEvents} allEvents={allEvents} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
             }
             <div className="popup_background more_events" onClick={() => {setIsPopUpOpen(false)}} />
             <div className="popup_container more_events">

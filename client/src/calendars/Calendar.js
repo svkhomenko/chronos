@@ -7,6 +7,7 @@ import isoToGcalDescription from "../tools/isoToGcalDescription";
 import Sidebar from "../elements/Sidebar";
 import Week from "./Week";
 import Month from "./Month";
+import Year from "./Year";
 
 function Calendar() {
     const curUser = useSelector((state) => state.user);
@@ -57,8 +58,6 @@ function Calendar() {
                 }
                 return 0;
             });
-
-            console.log(calendars);
 
             dispatch(setCalendars({ 
                 calendars: calendars
@@ -117,6 +116,10 @@ function Calendar() {
     useEffect(() => {
         setNewSizes();
     }, []);
+
+    useEffect(() => {
+        setNewSizes();
+    }, [curCalendars.calendars[0]]);
     
     window.addEventListener('resize', (e) => {
         setNewSizes();
@@ -126,12 +129,26 @@ function Calendar() {
         case "month":
             return (<>
                 <Sidebar />
-                <Month holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                {
+                    curCalendars.calendars[0] &&
+                    <Month holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                }
+            </>);
+        case "year":
+            return (<>
+                <Sidebar />
+                {
+                    curCalendars.calendars[0] &&
+                    <Year holidays={holidays} />
+                }
             </>);
         default:
             return (<>
                 <Sidebar />
-                <Week holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                {
+                    curCalendars.calendars[0] &&
+                    <Week holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                }
             </>);
     }
 

@@ -5,6 +5,7 @@ import { removeUser } from '../store/slices/userSlice';
 import { getSrc, getAvatar } from "../tools/tools_func";
 import { SERVER_URL } from "../const";
 import PopUpProfile from '../users/PopUpProfile';
+import SearchBar from './SearchBar';
 
 function Header() {
     const curUser = useSelector((state) => state.user);
@@ -23,6 +24,7 @@ function Header() {
                 {
                     curUser.id 
                     ? <div className='header_buttons_container'>
+                        <SearchBar />
                         <button className="button first" onClick={logout}>Log out</button>
                         <div onClick={() => {setIsPopUpProfileOpen(true)}} className="user_icon_container">
                             <div className="user_icon_outer">

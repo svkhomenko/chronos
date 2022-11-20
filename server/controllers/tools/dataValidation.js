@@ -78,11 +78,11 @@ async function validateEmail(email) {
     }
 }
 
-// function validateRole(role) {
-//     if (role !== 'admin' && role !== 'user') {
-//         throw new ValidationError("Role must be 'admin' or 'user'", 400);
-//     }
-// }
+function validateRole(role) {
+    if (role !== 'admin' && role !== 'user') {
+        throw new ValidationError("Role must be 'admin' or 'user'", 400);
+    }
+}
 
 function validateName(name) {
     if (!name) {
@@ -138,7 +138,7 @@ module.exports = {
     validateLogin,
     validateFullName,
     validateEmail,
-    // validateRole,
+    validateRole,
     validateName,
     validateDescription,
     validateCategory,

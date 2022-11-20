@@ -11,7 +11,7 @@ const UserCalendar = db.sequelize.models.user_calendar;
 
 async function getAllEvents(req, res) {
     const token = req.headers.authorization;
-    let { calendarIds, dateFrom, dateTo } = req.query;
+    let { calendarIds, dateFrom, dateTo, search } = req.query;
 
     try {
         const decoded = await verifyJWTToken(token, process.env.SECRET);
@@ -84,8 +84,32 @@ async function getAllEvents(req, res) {
             };
         }
 
+        if (search) {
+            where = {
+                ...where,
+                [Op.or]: [
+                    { 
+                        name: {
+                            [Op.substring]: search
+                        }
+                    },
+                    { 
+                        description: {
+                            [Op.substring]: search
+                        }
+                    },
+                    { 
+                        category: {
+                            [Op.substring]: search
+                        }
+                    }
+                ] 
+            };
+        }
+
         let events = await Event.findAll({
-            where
+            where,
+            limit: (search ? 10 : undefined)
         });
 
         events = events.map(event => ({
@@ -96,7 +120,8 @@ async function getAllEvents(req, res) {
             dateFrom : event.date_from,
             dateTo: event.date_to,
             color: event.color,
-            calendarId: event.calendar_id
+            calendarId: event.calendar_id,
+            completed: event.completed
         }));
 
         res.status(200)

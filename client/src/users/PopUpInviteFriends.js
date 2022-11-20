@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import { setScrollToY, setMessage } from '../store/slices/calendarsSlice';
+import { setCalendars, setMessage } from '../store/slices/calendarsSlice';
 import { getSrc, getAvatar } from "../tools/tools_func";
 import { SERVER_URL } from "../const";
 
-function PopUpInviteFriends({ calendar, setIsPopUpOpen }) {
+function PopUpInviteFriends({ calendar, setCalendar, setIsPopUpOpen }) {
     const curUser = useSelector((state) => state.user);
+    const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
 
     const [chosenUsers, setChosenUsers] = useState([]);
@@ -14,38 +15,40 @@ function PopUpInviteFriends({ calendar, setIsPopUpOpen }) {
     const [allUsers, setAllUsers] = useState([]);
 
     useEffect(() => {
-        fetch(SERVER_URL + '/api/users?' + new URLSearchParams(
+        if (usersSearch) {
+            fetch(SERVER_URL + '/api/users?' + new URLSearchParams(
+                {
+                    search: usersSearch,
+                    notUsersIds: calendar.users.map(user => user.id).join(',')
+                }
+            ), 
             {
-                search: usersSearch,
-                notUsersIds: calendar.users.map(user => user.id).join(',')
-            }
-        ), 
-        {
-            method: 'GET',
-            headers: {
-                'authorization': curUser.token
-            }
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw response;
-            }
-            return response.json();
-        })
-        .then((response) => {
-            setAllUsers(response);
-        })
-        .catch((err) => {
-            console.log('err', err, err.body);
-            switch(err.status) {
-                case 401:
-                    dispatch(removeUser());
-                    window.location.href = '/login';
-                    break;
-                default:
-                    window.location.href = '/error';
-            }
-        });
+                method: 'GET',
+                headers: {
+                    'authorization': curUser.token
+                }
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw response;
+                }
+                return response.json();
+            })
+            .then((response) => {
+                setAllUsers(response);
+            })
+            .catch((err) => {
+                console.log('err', err, err.body);
+                switch(err.status) {
+                    case 401:
+                        dispatch(removeUser());
+                        window.location.href = '/login';
+                        break;
+                    default:
+                        window.location.href = '/error';
+                }
+            });
+        }
     }, [usersSearch]);
 
     return (
@@ -70,7 +73,7 @@ function PopUpInviteFriends({ calendar, setIsPopUpOpen }) {
                                     </div>
                                     {user.login}
                                     <div className='delete_category'
-                                        onClick={() => {removeUser(user)}}>
+                                        onClick={() => {removeChosenUser(user)}}>
                                         <iconify-icon icon="iwwa:delete" />
                                     </div>
                                 </div>
@@ -99,7 +102,9 @@ function PopUpInviteFriends({ calendar, setIsPopUpOpen }) {
                             ))}
                         </div>
                     }
-                    <button onClick={inviteUsers}>Invite friends</button>
+                    {chosenUsers.length !== 0 && 
+                        <button onClick={inviteUsers}>Invite friends</button>
+                    }
                 </div>
             </div>
         </>
@@ -115,12 +120,61 @@ function PopUpInviteFriends({ calendar, setIsPopUpOpen }) {
         }
     }
     
-    function removeUser(user) {
+    function removeChosenUser(user) {
         setChosenUsers(chosenUsers.filter(u => u.id != user.id));
     }
 
     function inviteUsers() {
+        fetch(SERVER_URL + `/api/calendars/${calendar.id}/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': curUser.token
+            },
+            body: JSON.stringify({ 
+                userIds: chosenUsers.map(user => user.id)
+            })
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw response;
+            }
 
+            const users = [...calendar.users, ...chosenUsers.map(chosenUser => ({
+                ...chosenUser,
+                userRole: "user"
+            }))];
+
+            dispatch(setCalendars({
+                calendars: curCalendars.calendars.map(c => {
+                    if (c.id != calendar.id) {
+                        return c;
+                    }
+                    return ({
+                        ...calendar,
+                        users: users
+                    });
+                })
+            }));
+            setCalendar({
+                ...calendar,
+                users: users
+            });
+            dispatch(setMessage({ message: `Users were invited to ${calendar.name} calendar` }));
+            setIsPopUpOpen(false);
+        })
+        .catch((err) => {
+            console.log('err', err, err.body);
+            switch(err.status) {
+                case 401:
+                case 403:
+                    dispatch(removeUser());
+                    window.location.href = '/login';
+                    break;
+                default:
+                    window.location.href = '/error';
+            }
+        });
     }
 }
 

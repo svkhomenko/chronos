@@ -167,7 +167,7 @@ function Week({ holidays, widthTD, heightTD }) {
             }
             {
                 isPopUpGetEventInfoOpen &&
-                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
+                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setCurEvent={setEventForPopupGetEventInfo} setEvents={setEvents} allEvents={events} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
             }
             <table onClick={createEvent}>
                 <thead>

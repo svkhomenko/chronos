@@ -53,7 +53,7 @@ function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopu
     }
 }
 
-function EventsForDay({ events, date, holidaysNumder, getEventColor, widthTD, handleDragStop, openEventPopup }) {
+function EventsForDay({ events, setEvents, allEvents, date, holidaysNumder, getEventColor, widthTD, handleDragStop, openEventPopup }) {
     const curCalendars = useSelector((state) => state.calendars);
     const maxEvents = 3 - holidaysNumder;
 
@@ -63,7 +63,7 @@ function EventsForDay({ events, date, holidaysNumder, getEventColor, widthTD, ha
         <>
             {
                 isPopUpMoreEventsOpen &&
-                <PopUpMoreEvents events={events} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
+                <PopUpMoreEvents events={events} setEvents={setEvents} allEvents={allEvents} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
             }
             {(events.slice(0, maxEvents)).map(event => (
                 <RndHeaderEvent key={event.id}
@@ -157,7 +157,7 @@ function Month({ holidays, widthTD, heightTD }) {
             }
             {
                 isPopUpGetEventInfoOpen &&
-                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
+                <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setCurEvent={setEventForPopupGetEventInfo} setEvents={setEvents} allEvents={events} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
             }
             <table>
                 <thead>
@@ -182,6 +182,8 @@ function Month({ holidays, widthTD, heightTD }) {
                                             holiday.summary
                                         ))}----   
                                         <EventsForDay events={getEventsForThisDay(date)}
+                                                    setEvents={setEvents}
+                                                    allEvents={events}
                                                     date={date}
                                                     holidaysNumder={hols.length}
                                                     getEventColor={getEventColor}

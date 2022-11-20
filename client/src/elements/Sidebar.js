@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import Select from 'react-select';
+import moment from 'moment';
 import TextField from '@mui/material/TextField';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,7 +9,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCalendars, setCurDate, removeCurDate, setRepresentation } from '../store/slices/calendarsSlice';
 import PopUpGetCalendarInfo from "../popups/PopUpGetCalendarInfo";
-import moment from 'moment';
 
 function Sidebar() {
     const curCalendars = useSelector((state) => state.calendars);
@@ -19,14 +19,15 @@ function Sidebar() {
 
     const representationOptions = [
         { value: 'week', label: 'Week' },
-        { value: 'month', label: 'Month' }
+        { value: 'month', label: 'Month' },
+        { value: 'year', label: 'Year' }
     ];
 
     return (
         <div>
             {
                 isPopUpGetCalendarInfoOpen &&
-                <PopUpGetCalendarInfo calendar={calendarForPopupGetCalendarInfo} setIsPopUpOpen={setIsPopUpGetCalendarInfoOpen} />
+                <PopUpGetCalendarInfo curCalendar={calendarForPopupGetCalendarInfo} setIsPopUpOpen={setIsPopUpGetCalendarInfoOpen} />
             }
             {
                 curCalendars.calendars.map(calendar => (

@@ -7,7 +7,7 @@ const { validateName, validateDescription, validateDate, validateColor } = requi
 const Event = db.sequelize.models.event;
 
 async function updateEventData(req, res) {
-    const { name, description, dateFrom, dateTo, color } = req.body;
+    const { name, description, dateFrom, dateTo, color, completed } = req.body;
     const eventId = req.params.event_id;
     
     try {
@@ -53,6 +53,11 @@ async function updateEventData(req, res) {
                 color
             });
         }
+        if (completed !== undefined) {
+            event.set({
+                completed: !!completed
+            });
+        }
 
         event = await event.save();
     
@@ -65,7 +70,8 @@ async function updateEventData(req, res) {
                 dateFrom : event.date_from,
                 dateTo: event.date_to,
                 color: event.color,
-                calendarId: event.calendar_id 
+                calendarId: event.calendar_id,
+                completed: event.completed
             });
     }
     catch(err) {
