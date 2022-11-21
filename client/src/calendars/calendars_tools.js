@@ -48,6 +48,21 @@ function getEventColor(event, calendars) {
     return { backgroundColor: calendar[`${event.category}Color`] };
 }
 
+function eventsSort(a, b) {
+    let categories = {
+        'arrangement': 0,
+        'task': 1,
+        'reminder': 2
+    }
+    if (a.category !== b.category) {
+        return categories[b.category] - categories[a.category];
+    }
+    if (isAllDay(a) && !isAllDay(b)) {
+        return -1;
+    }
+    return 0;
+}
+
 function updateEvent(eventId, body, curUser, successFunction, deleteUser) {
     fetch(SERVER_URL + `/api/events/${eventId}}`, {
         method: 'PATCH',
@@ -113,6 +128,7 @@ export {
     isAllDay,
     getAllDayEvents,
     getEventColor,
+    eventsSort,
     updateEvent,
     deleteEvent
 };

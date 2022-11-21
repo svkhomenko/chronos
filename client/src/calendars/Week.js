@@ -115,7 +115,7 @@ function Week({ holidays, widthTD, heightTD }) {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        if (curCalendars.scrollToY) {
+        if (curCalendars.scrollToY !== undefined) {
             window.scrollTo(0, curCalendars.scrollToY);
             dispatch(removeScrollToY());
         }

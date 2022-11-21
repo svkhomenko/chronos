@@ -8,7 +8,7 @@ import { SERVER_URL } from "../const";
 import PopUpCreateEvent from "../popups/PopUpCreateEvent";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
 import PopUpMoreEvents from "../popups/PopUpMoreEvents";
-import { fillArray, getHolidaysOnDate, isAllDay, getEventColor, updateEvent } from "./calendars_tools";
+import { fillArray, getHolidaysOnDate, getEventColor, eventsSort, updateEvent } from "./calendars_tools";
 
 function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -53,9 +53,9 @@ function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopu
     }
 }
 
-function EventsForDay({ events, setEvents, allEvents, date, holidaysNumder, getEventColor, widthTD, handleDragStop, openEventPopup }) {
+function EventsForDay({ events, setEvents, allEvents, date, holidays, getEventColor, widthTD, handleDragStop, openEventPopup }) {
     const curCalendars = useSelector((state) => state.calendars);
-    const maxEvents = 3 - holidaysNumder;
+    const maxEvents = 3 - holidays.length;
 
     const [isPopUpMoreEventsOpen, setIsPopUpMoreEventsOpen] = useState(false);
 
@@ -63,7 +63,7 @@ function EventsForDay({ events, setEvents, allEvents, date, holidaysNumder, getE
         <>
             {
                 isPopUpMoreEventsOpen &&
-                <PopUpMoreEvents events={events} setEvents={setEvents} allEvents={allEvents} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
+                <PopUpMoreEvents events={events} setEvents={setEvents} allEvents={allEvents} holidays={holidays} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
             }
             {(events.slice(0, maxEvents)).map(event => (
                 <RndHeaderEvent key={event.id}
@@ -143,7 +143,7 @@ function Month({ holidays, widthTD, heightTD }) {
     }, []);
 
     useEffect(() => {
-        if (curCalendars.scrollToY) {
+        if (curCalendars.scrollToY !== undefined) {
             window.scrollTo(0, curCalendars.scrollToY);
             dispatch(removeScrollToY());
         }
@@ -185,7 +185,7 @@ function Month({ holidays, widthTD, heightTD }) {
                                                     setEvents={setEvents}
                                                     allEvents={events}
                                                     date={date}
-                                                    holidaysNumder={hols.length}
+                                                    holidays={hols}
                                                     getEventColor={getEventColor}
                                                     widthTD={widthTD}
                                                     handleDragStop={handleDragStop}
@@ -284,20 +284,7 @@ function Month({ holidays, widthTD, heightTD }) {
             }
         });
 
-        ev.sort((a, b) => {
-            let categories = {
-                'arrangement': 0,
-                'task': 1,
-                'reminder': 2
-            }
-            if (a.category !== b.category) {
-                return categories[b.category] - categories[a.category];
-            }
-            if (isAllDay(a) && !isAllDay(b)) {
-                return -1;
-            }
-            return 0;
-        });
+        ev.sort(eventsSort);
 
         return ev;
     }

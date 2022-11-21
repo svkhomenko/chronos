@@ -158,8 +158,10 @@ function Sidebar() {
     }
 
     function setCurDayToday() {
-        dispatch(removeCurDate());
-        window.location.reload();
+        if (!moment(new Date()).isSame(moment(new Date(curCalendars.curDate)), "days")) {
+            dispatch(removeCurDate());
+            window.location.reload();
+        }
     }
 }
 
