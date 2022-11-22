@@ -22,18 +22,21 @@ function Header() {
             <header> 
                 <h1><Link to={'/'}>Chronos</Link></h1>
                 {
+                    curUser.id &&
+                    <SearchBar />
+                }
+                {
                     curUser.id 
                     ? <div className='header_buttons_container'>
-                        <SearchBar />
                         <button className="button first" onClick={logout}>Log out</button>
                         <div onClick={() => {setIsPopUpProfileOpen(true)}} className="user_icon_container">
                             <div className="user_icon_outer">
                                 {
                                     curUser.profilePicture
                                     ? <img src={getSrc(curUser.profilePicture)} alt="avatar" />
-                                    : <div className='initials'>
+                                    : <>
                                         {getAvatar(curUser.fullName)}
-                                    </div>
+                                    </>
                                 }
                             </div>
                             <span>{curUser.login}</span>

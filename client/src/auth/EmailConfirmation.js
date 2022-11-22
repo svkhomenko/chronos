@@ -38,7 +38,7 @@ function EmailConfirmation() {
 
     return (
         <div className='display_center'>
-            <div className='post_card no_hr user_form'> 
+            <div className='display_center_vertical'> 
                 <div className='main_message'>{message}</div>
                 <div className='auth_link'>
                     <Link to={'/login'}>

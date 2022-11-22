@@ -119,7 +119,7 @@ function UpdateEvent({ curEvent, setIsUpdating }) {
             setDateTo(moment(dateFrom).endOf('day').toDate());
         }
     }
-
+    
     function handleSubmit(event) {
         event.preventDefault();
 

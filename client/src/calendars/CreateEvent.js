@@ -4,11 +4,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import TextField from '@mui/material/TextField';
+import { ThemeProvider } from '@mui/material/styles';
+import customTheme from '../elements/customTheme';
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
 import { setMessage } from '../store/slices/calendarsSlice';
 import { validateName, validateDescription, validateDate } from "../tools/dataValidation";
+import { getColorClassName } from "./calendars_tools";
 import { colors } from "../tools/const_tools";
 import { SERVER_URL } from "../const";  
 
@@ -16,7 +19,7 @@ function CreateEvent() {
     const curUser = useSelector((state) => state.user);
     const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
-
+    
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('arrangement');
@@ -42,12 +45,12 @@ function CreateEvent() {
 
     return (
         <div className='display_center'>
-            <div className='post_card no_hr user_form'> 
+            <div> 
                 <h2>Create new event</h2>
                 <form onSubmit={handleSubmit}>
                     <div className='label'>Name:</div>
                     <div className='message error'>{nameMessage}</div>
-                    <input type="text" value={name} onChange={handleChangeName} className="input" />
+                    <textarea value={name} onChange={handleChangeName} className="small" />
 
                     <div className='label'>Description:</div>
                     <div className='message error'>{descriptionMessage}</div>
@@ -56,69 +59,68 @@ function CreateEvent() {
                     <div className='status_select_contatiner'>
                         <div className='label'>Category:</div>
                         <Select value={getCategoryValue()} options={categoryOptions} 
-                                onChange={handleChangeCategory} className='status_select' classNamePrefix='status_select' />
+                                onChange={handleChangeCategory} className='select' classNamePrefix='select' />
                     </div>
 
                     <div className='status_select_contatiner'>
                         <div className='label'>Calendar:</div>
                         <Select value={getCalendarValue()} options={calendarOptions} 
-                                onChange={handleChangeCalendar} className='status_select' classNamePrefix='status_select' />
+                                onChange={handleChangeCalendar} className='select' classNamePrefix='select' />
                     </div>
 
                     <div className='label'>
-                        {category == 'arrangement' ? "Date from:" : "Date"}
+                        {category == 'arrangement' ? "Date from:" : "Date:"}
                     </div>
-                    <LocalizationProvider dateAdapter={AdapterMoment}>
-                        <DateTimePicker
-                            label="Responsive"
-                            renderInput={(params) => <TextField {...params} />}
-                            value={dateFrom}
-                            onChange={(newValue) => {
-                                setDateFrom(newValue);
-                            }}
-                        />
-                    </LocalizationProvider>
+                    <ThemeProvider theme={customTheme}>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <DateTimePicker
+                                renderInput={(params) => <TextField {...params} />}
+                                value={dateFrom}
+                                onChange={(newValue) => {
+                                    setDateFrom(newValue);
+                                }}
+                            />
+                        </LocalizationProvider>
+                    </ThemeProvider>
 
                     {
                         category == 'arrangement'
                         ? <div>
                             <div className='label'>Date to:</div>
                             <div className='message error'>{dateToMessage}</div>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DateTimePicker
-                                    label="Responsive"
-                                    renderInput={(params) => <TextField {...params} />}
-                                    value={dateTo}
-                                    onChange={(newValue) => {
-                                        setDateTo(newValue);
-                                    }}
-                                />
-                            </LocalizationProvider>
+                            <ThemeProvider theme={customTheme}>
+                                <LocalizationProvider dateAdapter={AdapterMoment}>
+                                    <DateTimePicker
+                                        renderInput={(params) => <TextField {...params} />}
+                                        value={dateTo}
+                                        onChange={(newValue) => {
+                                            setDateTo(newValue);
+                                        }}
+                                    />
+                                </LocalizationProvider>
+                            </ThemeProvider>
                         </div>
-                        : <div>
-                            <input type="checkbox" className="status_checkbox"
+                        : <div className='checkbox_outer'>
+                            <input type="checkbox" className="checkbox"
                                     id='all_day' name='all_day'
                                     checked={allDay} onChange={handleChangeAllDay} />
-                            <label htmlFor='all_day' className="status_label">
+                            <label htmlFor='all_day' className="checkbox_label">
                                 All day
                             </label>
                         </div>
                     }
 
                     <div>
-                        Color: 
-                        { color &&
-                            <div>
-                                Chosen color: <div className='color' style={{ backgroundColor: color }} />
-                                <div onClick={() => {setColor('')}}>Delete color</div>
-                            </div>
-                        }
-                        {
-                            colors.map((c, index) => (
-                                <div key={index} className='color' onClick={() => {setColor(c)}}
-                                    style={{ backgroundColor: c }} />
-                            ))
-                        }
+                        <div className='label'>Color:</div>
+                        <div className='colors_container'>
+                            {
+                                colors.map((c, index) => (
+                                    <div key={index} className={getColorClassName(c, color)} 
+                                        onClick={() => {handleChangeColor(c)}}
+                                        style={{ backgroundColor: c }} />
+                                ))
+                            }
+                        </div>
                     </div>
 
                     <input type="submit" value="Create event" className='button submit' />
@@ -162,6 +164,15 @@ function CreateEvent() {
         if (category !== "arrangement" && !allDay) {
             setDateFrom(moment(dateFrom).startOf('day').toDate());
             setDateTo(moment(dateFrom).endOf('day').toDate());
+        }
+    }
+
+    function handleChangeColor(c) {
+        if (c != color) {
+            setColor(c);
+        }
+        else {
+            setColor('');
         }
     }
 

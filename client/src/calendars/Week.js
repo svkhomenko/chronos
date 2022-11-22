@@ -401,7 +401,8 @@ function Week({ holidays, widthTD, heightTD }) {
     }
 
     function openEventPopup(event) {
-        setEventForPopupGetEventInfo(event);
+        let fullEvent = events.find(e => e.id == event.id);
+        setEventForPopupGetEventInfo(fullEvent);
         setIsPopUpGetEventInfoOpen(true);
     }
 }

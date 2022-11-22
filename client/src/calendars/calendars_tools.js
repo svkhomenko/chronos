@@ -63,6 +63,14 @@ function eventsSort(a, b) {
     return 0;
 }
 
+function getColorClassName(cur, chosen) {
+    let str = 'color';
+    if (cur == chosen) {
+        str += ' active';
+    }
+    return str;
+}
+
 function updateEvent(eventId, body, curUser, successFunction, deleteUser) {
     fetch(SERVER_URL + `/api/events/${eventId}}`, {
         method: 'PATCH',
@@ -129,6 +137,7 @@ export {
     getAllDayEvents,
     getEventColor,
     eventsSort,
+    getColorClassName,
     updateEvent,
     deleteEvent
 };

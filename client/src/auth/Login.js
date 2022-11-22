@@ -16,7 +16,7 @@ function Login() {
 
     return (
         <div className='display_center'>
-            <div className='post_card no_hr user_form'> 
+            <div className='post_card'> 
                 <h2>Login</h2>
                 <div className='message error'>{errMessage}</div>
                 <form onSubmit={handleSubmit}>

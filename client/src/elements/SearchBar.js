@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import { getDateString } from "../tools/tools_func";
+import moment from 'moment';
+import { isAllDay } from '../calendars/calendars_tools';
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
 import { SERVER_URL } from "../const";
 
@@ -54,30 +55,56 @@ function SearchBar() {
     }, [search]);
 
     return (
-        <div>
+        <div className='search_container'>
             {
                 isPopUpGetEventInfoOpen &&
                 <PopUpGetEventInfo curEvent={eventForPopupGetEventInfo} setCurEvent={setEventForPopupGetEventInfo} setEvents={setEvents} allEvents={events} setIsPopUpOpen={setIsPopUpGetEventInfoOpen} />
             }
-            <input className="search_input" value={search} onChange={handleChange} 
+            <input className="search_input input" value={search} onChange={handleChange} 
                     type="search" placeholder="Find event" />
             {search !== '' && events.length !== 0 && 
                 <div className='options_container'>
                     {events.map(event => (
                         <div key={event.id} className="options"
                             onClick={() => {openEventPopup(event)}}>
-                            <div>{event.name}</div>
-                            <div>{event.description}</div>
-                            <div>{getDateString(event.dateFrom)}{' - '}{getDateString(event.dateTo)}</div>
-                            <div>{event.category}</div>
-                            <div>{event.color}</div>
-                            <div>{getCalendar(event).name}</div> 
+                            <div>
+                                <div className='event_name'>{event.name}</div>
+                                <div>{getCalendar(event).name}</div> 
+                            </div>
+                            {getDateString(event)}
                         </div>
                     ))}
                 </div>
             }
         </div>
     );
+
+    function getDateString(event) {
+        if (event.category == 'arrangement') {
+            return (
+                <div>
+                    <div>{moment(new Date(event.dateFrom)).format('MMM D YYYY, h:mm a')}</div>
+                    <div>{moment(new Date(event.dateTo)).format('MMM D YYYY, h:mm a')}</div>
+                </div>
+            );
+        }
+        else {
+            if (isAllDay(event)) {
+                return (
+                    <div>
+                        {moment(new Date(event.dateFrom)).format('MMM D YYYY')}
+                    </div>
+                );
+            }
+            else {
+                return (
+                    <div>
+                        {moment(new Date(event.dateFrom)).format('MMM D YYYY, h:mm a')}
+                    </div>
+                );
+            }
+        }
+    }
 
     function handleChange(event) {
         setSearch(event.target.value);

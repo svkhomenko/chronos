@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
 import { setMessage } from '../store/slices/calendarsSlice';
 import { validateName, validateDescription } from "../tools/dataValidation";
+import { getColorClassName } from "./calendars_tools";
 import { colors } from "../tools/const_tools";
 import { SERVER_URL } from "../const";  
 
@@ -26,58 +27,49 @@ function CreateCalendar() {
                 <form onSubmit={handleSubmit}>
                     <div className='label'>Name:</div>
                     <div className='message error'>{nameMessage}</div>
-                    <input type="text" value={name} onChange={handleChangeName} className="input" />
+                    <textarea value={name} onChange={handleChangeName} className="small" />
 
                     <div className='label'>Description:</div>
                     <div className='message error'>{descriptionMessage}</div>
                     <textarea value={description} onChange={handleChangeDescription} className="large" />
-
+                    
                     <div>
-                        Arrangement color: 
-                        { arrangementColor &&
-                            <div>
-                                Chosen color: <div className='color' style={{ backgroundColor: arrangementColor }} />
-                                <div onClick={() => {setArrangementColor('')}}>Delete color</div>
-                            </div>
-                        }
-                        {
-                            colors.map((c, index) => (
-                                <div key={index} className='color' onClick={() => {setArrangementColor(c)}}
-                                    style={{ backgroundColor: c }} />
-                            ))
-                        }
+                        <div className='label'>Arrangement color:</div>
+                        <div className='colors_container'>
+                            {
+                                colors.map((c, index) => (
+                                    <div key={index} className={getColorClassName(c, arrangementColor)} 
+                                        onClick={() => {handleChangeColor(c, arrangementColor, setArrangementColor)}}
+                                        style={{ backgroundColor: c }} />
+                                ))
+                            }
+                        </div>
                     </div>
 
                     <div>
-                        Reminder color: 
-                        { reminderColor &&
-                            <div>
-                                Chosen color: <div className='color' style={{ backgroundColor: reminderColor }} />
-                                <div onClick={() => {setReminderColor('')}}>Delete color</div>
-                            </div>
-                        }
-                        {
-                            colors.map((c, index) => (
-                                <div key={index} className='color' onClick={() => {setReminderColor(c)}}
-                                    style={{ backgroundColor: c }} />
-                            ))
-                        }
+                        <div className='label'>Reminder color:</div>
+                        <div className='colors_container'>
+                            {
+                                colors.map((c, index) => (
+                                    <div key={index} className={getColorClassName(c, reminderColor)} 
+                                        onClick={() => {handleChangeColor(c, reminderColor, setReminderColor)}}
+                                        style={{ backgroundColor: c }} />
+                                ))
+                            }
+                        </div>
                     </div>
 
                     <div>
-                        Task color:
-                        { taskColor &&
-                            <div>
-                                Chosen color: <div className='color' style={{ backgroundColor: taskColor }} />
-                                <div onClick={() => {setTaskColor('')}}>Delete color</div>
-                            </div>
-                        }
-                        {
-                            colors.map((c, index) => (
-                                <div key={index} className='color' onClick={() => {setTaskColor(c)}}
-                                    style={{ backgroundColor: c }} />
-                            ))
-                        }
+                        <div className='label'>Task color:</div>
+                        <div className='colors_container'>
+                            {
+                                colors.map((c, index) => (
+                                    <div key={index} className={getColorClassName(c, taskColor)} 
+                                        onClick={() => {handleChangeColor(c, taskColor, setTaskColor)}}
+                                        style={{ backgroundColor: c }} />
+                                ))
+                            }
+                        </div>
                     </div>
 
                     <input type="submit" value="Create calendar" className='button submit' />
@@ -92,6 +84,15 @@ function CreateCalendar() {
 
     function handleChangeDescription(event) {
         setDescription(event.target.value);
+    }
+
+    function handleChangeColor(color, chosenColor, setFunc) {
+        if (color != chosenColor) {
+            setFunc(color);
+        }
+        else {
+            setFunc('');
+        }
     }
 
     function handleSubmit(event) {

@@ -77,11 +77,11 @@ function validateEmail(email, setEmailMessage) {
 
 function validateName(name, setNameMessage) {
     if (!name) {
-        setNameMessage("Title is required");
+        setNameMessage("Name is required");
         return false;
     }
     if (name.length > 200) {
-        setNameMessage("Title length must be less than 200 characters");
+        setNameMessage("Name length must be less than 200 characters");
         return false;
     }
     return true;

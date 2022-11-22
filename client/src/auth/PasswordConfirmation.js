@@ -14,7 +14,7 @@ function PasswordConfirmation() {
 
     return (
         <div className='display_center'>
-            <div className='post_card no_hr user_form'> 
+            <div> 
                 {
                     message 
                     ? <div className='main_message'>{message}</div>

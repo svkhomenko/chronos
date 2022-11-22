@@ -22,7 +22,7 @@ function Register() {
 
     return (
         <div className='display_center'>
-            <div className='post_card no_hr user_form'>
+            <div>
                 <h2>Register</h2>
                 <form onSubmit={handleSubmit}>
                     <div className='label'>Login:</div>

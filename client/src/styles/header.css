@@ -28,16 +28,45 @@ header h1 a:hover {
 
 /* search */
 
-header .menu_bar {
-    display: flex;
-    justify-content: space-between;
-    width: 30%;
-    font-size: 16px;
-    color: var(--dark-green-color);
+header .search_container {
+    position: relative;
 }
 
-header .menu_bar .active {
-    color: var(--green-color);
+header .search_container .options_container  {
+    position: absolute;
+    z-index: 100;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 45vw;
+    border: 1px solid var(--dark-green-color);
+    background-color: white;
+}
+
+header .search_container .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+header .search_container .event_name {
+    color: var(--dark-green-color);
+    font-size: 18px;
+}
+
+header .search_container .options:not(:nth-last-of-type(1)) {
+    border-bottom: 1px solid var(--green-color);
+}
+
+header .search_container .options:hover {
+    background-color: var(--light-green-color);
+}
+
+header .search_container .search_input:not(:focus) + .options_container:not(:hover) {
+    display: none;
 }
 
 /* header_buttons_container */
@@ -54,5 +83,13 @@ header .menu_bar .active {
 
 header .user_icon_container:hover {
     color: var(--grey-color);
+}
+
+header .user_icon_outer {
+    margin-bottom: 3px;
+}
+
+header .user_icon_container:hover .initials {
+    color: rgba(256, 256, 256, 0.7);
 }
 
