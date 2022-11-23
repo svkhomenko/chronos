@@ -75,7 +75,7 @@ function EventsForDay({ events, setEvents, allEvents, date, holidays, getEventCo
             ))}
             {
                 events.length > maxEvents &&
-                <div onClick={showMoreEvents} className='more_events'>
+                <div onClick={showMoreEvents}>
                     {`${events.length - maxEvents} more event${events.length == maxEvents + 1 ? '' : 's'}`}
                 </div>
             }
@@ -178,8 +178,8 @@ function Month({ holidays, widthTD, heightTD }) {
                                             {moment(new Date(date)).format('D MMM')}
                                         </div>
                                         ----
-                                        {hols.map(holiday => (
-                                            holiday.summary
+                                        {hols.map((holiday, index) => (
+                                            <div key={index}>{holiday.summary}</div>
                                         ))}----   
                                         <EventsForDay events={getEventsForThisDay(date)}
                                                     setEvents={setEvents}

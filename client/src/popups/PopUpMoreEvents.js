@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setCurDate, setRepresentation } from '../store/slices/calendarsSlice';
 import moment from 'moment';
 import PopUpGetEventInfo from "./PopUpGetEventInfo";
-import { getDateString } from "../tools/tools_func";
+import { getEventCompletedClassName, getDateString } from "../calendars/calendars_tools";
 
 function PopUpMoreEvents({ events, setEvents, allEvents, holidays, date, setIsPopUpOpen }) {
     const dispatch = useDispatch();
@@ -19,18 +19,21 @@ function PopUpMoreEvents({ events, setEvents, allEvents, holidays, date, setIsPo
             }
             <div className="popup_background more_events" onClick={() => {setIsPopUpOpen(false)}} />
             <div className="popup_container more_events">
-                <div onClick={showThatDayOnWeek}>
+                <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                    <iconify-icon icon="material-symbols:close" />
+                </div>
+                <div className="cur_date button" onClick={showThatDayOnWeek}>
                     {moment(new Date(date)).format('ddd, Do MMMM YYYY')}
                 </div>
-                {holidays.map(holiday => (
-                    holiday.summary
+                {holidays.map((holiday, index) => (
+                    <div className='holiday' key={index}>{holiday.summary}</div>
                 ))}
                 <div>
                     {
                         events.map(event => (
-                            <div key={event.id} className='event'
+                            <div key={event.id} className={'event' + getEventCompletedClassName(event)}
                                 onClick={() => {openEventPopup(event)}}>
-                                {event.name}, {getDateString(event.dateFrom)}{' - '}{getDateString(event.dateTo)}, {'' + event.completed}
+                                <span className='event_name'>{event.name}</span>, <span className='event_date'>{getDateString(event)}</span>
                             </div>
                         ))
                     }

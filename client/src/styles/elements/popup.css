@@ -28,13 +28,20 @@
     width: 600px;
     max-height: 540px;
     overflow-x: auto;
-    padding: 0 30px 20px;
+    padding: 20px 30px;
     background-color: white;
+}
 
+.popup_container h2 {
+    margin-top: 10px;
 }
 
 .popup_container.sure {
     z-index: 1100;
+}
+
+.popup_container.sure:not(.large) {
+    width: 400px;
 }
 
 .popup_container.more_events {
@@ -53,4 +60,122 @@
     background-color: black;
     color: white;
 }
+
+/* icons */
+
+.popup_container .icon.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.popup_container .icons_container {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.popup_container .icons_container .icon:not(:last-of-type) {
+    margin-right: 10px;
+}
+
+.popup_container .name {
+    font-size: 20px;
+    color: var(--dark-green-color);
+    margin: 10px 0;
+}
+
+.popup_container .description {
+    font-size: 16px;
+    margin: 7px 0;
+}
+
+.popup_container .status {
+    font-size: 14px;
+}
+
+.popup_container .calendar_colors_container {
+    display: flex;
+}
+
+.popup_container .calendar_colors_container div:not(:last-of-type) {
+    margin-right: 15px;
+}
+
+.popup_container .calendar_users_container {
+    margin: 10px 0;
+}
+
+.popup_container .user_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    cursor: default;
+}
+
+.popup_container .user_container .select {
+    margin: 0 10px;
+}
+
+.popup_container .user_container .icon.delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.popup_container .user_info {
+    margin-left: 10px;
+}
+
+.popup_container .user_info .login {
+    color: var(--dark-green-color);
+}
+
+.popup_container .user_container:hover .user_info .login {
+    color: var(--green-color);
+}
+
+/* sure */
+
+.popup_container.sure .sure_text {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.popup_container.sure .sure_buttons_container {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* more_events */
+
+.popup_container.more_events .cur_date {
+    width: fit-content;
+    margin: 0 auto 15px;
+    font-size: 16px;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.popup_container.more_events .holiday {
+    margin-bottom: 10px;
+    color: var(--dark-green-color);
+    cursor: default;
+}
+
+.popup_container.more_events .event {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.popup_container.more_events .event .event_name {
+    font-size: 16px;
+    color: var(--dark-green-color);
+}
+
+.popup_container.more_events .event .event_date {
+    font-size: 14px;
+}
+
 

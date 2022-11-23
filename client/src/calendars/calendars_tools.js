@@ -71,6 +71,46 @@ function getColorClassName(cur, chosen) {
     return str;
 }
 
+function getEventCompletedClassName(event) {
+    if (event.category == 'task' && event.completed) {
+        return ' completed';
+    }
+    return '';
+}
+
+function getDateArr(event) {
+    let dateFrom = new Date(event.dateFrom);
+    if (event.category == 'arrangement') {
+        let dateTo = new Date(event.dateTo);
+        return [
+            `${dateFrom.toLocaleDateString()} ${dateFrom.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`,
+            `${dateTo.toLocaleDateString()} ${dateTo.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+        ];
+    }
+    else {
+        if (isAllDay(event)) {
+            return [
+                `${dateFrom.toLocaleDateString()}`
+            ];
+        }
+        else {
+            return [
+                `${dateFrom.toLocaleDateString()} ${dateFrom.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+            ];
+        }
+    }
+}
+
+function getDateString(event) {
+    let dates = getDateArr(event);
+    if (!dates[1]) {
+        return dates[0];
+    }
+    else {
+        return dates[0] + ' - ' + dates[1];
+    }
+}
+
 function updateEvent(eventId, body, curUser, successFunction, deleteUser) {
     fetch(SERVER_URL + `/api/events/${eventId}}`, {
         method: 'PATCH',
@@ -138,6 +178,9 @@ export {
     getEventColor,
     eventsSort,
     getColorClassName,
+    getEventCompletedClassName,
+    getDateArr,
+    getDateString,
     updateEvent,
     deleteEvent
 };

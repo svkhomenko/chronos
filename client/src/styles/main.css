@@ -6,7 +6,6 @@
 @import './year.css';
 
 @import './elements/user_icon.css';
-@import './elements/tooltip.css';
 @import './elements/forms.css';
 @import './elements/popup.css';
 
@@ -27,6 +26,7 @@ body a {
 /* buttons */
 
 .button {
+    height: fit-content;
     border: 2px solid var(--dark-green-color);
     border-radius: 40px;
     background-color: var(--dark-green-color);
@@ -35,6 +35,7 @@ body a {
     font-size: 12px;
     text-transform: uppercase;
     color: white;
+    cursor: default;
 }
 
 .button:hover {
@@ -81,6 +82,17 @@ h2 {
     color: var(--maroon-color);
 }
 
+/* icon */
+
+.icon {
+    font-size: 18px;
+    color: var(--dark-green-color);
+}
+
+.icon:hover {
+    color: var(--green-color);
+}
+
 /* display_center */
 
 .display_center {
@@ -99,4 +111,10 @@ h2 {
 /* .no_hr {
     border: none;
 } */
+
+/* completed */
+
+.completed {
+    text-decoration: line-through;
+}
 

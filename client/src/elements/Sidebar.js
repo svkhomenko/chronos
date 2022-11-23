@@ -71,7 +71,7 @@ function Sidebar() {
                 />
             </LocalizationProvider>
 
-            <div className='status_select_contatiner'>
+            <div>
                 <div className='label'>Representation:</div>
                 <Select value={getRepresentationValue()} options={representationOptions} 
                         onChange={handleChangeRepresentation} className='status_select' classNamePrefix='status_select' />

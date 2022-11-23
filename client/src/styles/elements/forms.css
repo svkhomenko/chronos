@@ -48,10 +48,6 @@
 
 /* select */
 
-.select_contatiner {
-    display: flex;
-    align-items: center;
-}
 
 .select__control {
     background-color: white !important;

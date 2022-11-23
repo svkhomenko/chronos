@@ -54,58 +54,63 @@ function PopUpInviteFriends({ calendar, setCalendar, setIsPopUpOpen }) {
     return (
         <>
             <div className="popup_background sure" onClick={() => {setIsPopUpOpen(false)}} />
-            <div className="popup_container sure">
-                <div className='display_center'>
-                    <div>Invite friends to {calendar.name} calendar</div>
-                    {chosenUsers.length !== 0 && 
-                        <div className="categories_container">
-                            {chosenUsers.map(user => (
-                                <div key={user.id} 
-                                    className="category tooltip" data-title={user.fullName}>
-                                    <div className="user_icon_outer">
-                                        {
-                                            user.profilePicture
-                                            ? <img src={getSrc(user.profilePicture)} alt="avatar" />
-                                            : <div className='initials'>
-                                                {getAvatar(user.fullName)}
-                                            </div>
-                                        }
-                                    </div>
-                                    {user.login}
-                                    <div className='delete_category'
-                                        onClick={() => {removeChosenUser(user)}}>
-                                        <iconify-icon icon="iwwa:delete" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    }
-                    <input className="search_input" 
-                        value={usersSearch} onChange={handleChange} 
-                        type="search" placeholder="Find friends" />
-                    {usersSearch !== '' && allUsers.length !== 0 && 
-                        <div className='options_container'>
-                            {allUsers.map(user => (
-                                <div key={user.id} className="options"
-                                    onClick={() => {addUser(user)}}>
-                                    <div className="user_icon_outer">
-                                        {
-                                            user.profilePicture
-                                            ? <img src={getSrc(user.profilePicture)} alt="avatar" />
-                                            : <div className='initials'>
-                                                {getAvatar(user.fullName)}
-                                            </div>
-                                        }
-                                    </div>
-                                    {user.login}
-                                </div>
-                            ))}
-                        </div>
-                    }
-                    {chosenUsers.length !== 0 && 
-                        <button onClick={inviteUsers}>Invite friends</button>
-                    }
+            <div className="popup_container sure large">
+                <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                    <iconify-icon icon="material-symbols:close" />
                 </div>
+                <h2>Invite friends to {calendar.name} calendar</h2>
+                {chosenUsers.length !== 0 && 
+                    <div className="calendar_users_container">
+                        {chosenUsers.map(user => (
+                            <div key={user.id} className="user_container">
+                                <div className="user_icon_outer small">
+                                    {
+                                        user.profilePicture
+                                        ? <img src={getSrc(user.profilePicture)} alt="avatar" />
+                                        : <>
+                                            {getAvatar(user.fullName, ' small')}
+                                        </>
+                                    }
+                                </div>
+                                <div className='user_info'>
+                                    <div className='login'>{user.login}</div>
+                                    <div className='status'>{user.fullName}</div>
+                                </div>
+                                <div className='icon delete' onClick={() => {removeChosenUser(user)}}>
+                                    <iconify-icon icon="iwwa:delete" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                }
+                <input className="input" value={usersSearch} onChange={handleChange} 
+                    type="search" placeholder="Find friends" />
+                {usersSearch !== '' && allUsers.length !== 0 && 
+                    <div className='calendar_users_container'>
+                        {allUsers.map(user => (
+                            <div key={user.id} className="user_container" onClick={() => {addUser(user)}}>
+                                <div className="user_icon_outer small">
+                                    {
+                                        user.profilePicture
+                                        ? <img src={getSrc(user.profilePicture)} alt="avatar" />
+                                        : <>
+                                            {getAvatar(user.fullName, ' small')}
+                                        </>
+                                    }
+                                </div>
+                                <div className='user_info'>
+                                    <div className='login'>{user.login}</div>
+                                    <div className='status'>{user.fullName}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                }
+                {chosenUsers.length !== 0 && 
+                    <button className='button' onClick={inviteUsers}>
+                        Invite friends
+                    </button>
+                }
             </div>
         </>
     );

@@ -65,7 +65,7 @@ function PopUpGetCalendarInfo({ curCalendar, setIsPopUpOpen }) {
                 <>
                     {
                         calendar.userRole == 'admin'
-                        ? <PopUpDeleteFor setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
+                        ? <PopUpDeleteFor calendarName={calendar.name} setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
                         : <PopUpSure text={'Do you want to delete calendar?'} setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
                     }
                 </>
@@ -77,48 +77,53 @@ function PopUpGetCalendarInfo({ curCalendar, setIsPopUpOpen }) {
             }
             <div className="popup_background" onClick={() => {setIsPopUpOpen(false)}} />
             <div className="popup_container">
-                <div className='display_center'>
-                    {
-                        isUpdating
-                        ? <UpdateCalendar calendar={calendar} setIsUpdating={setIsUpdating} />
-                        : <div className='post_card no_hr user_form'>
+                {
+                    isUpdating
+                    ? <UpdateCalendar calendar={calendar} setIsUpdating={setIsUpdating} />
+                    : <>
+                        <div className='icons_container'>
                             {
                                 calendar.status != 'main' &&
-                                <div onClick={() => {setIsPopUpSureOpen(true)}}>
+                                <div className='icon' onClick={() => {setIsPopUpSureOpen(true)}}>
                                     <iconify-icon icon="material-symbols:delete-rounded"/>
                                 </div>
                             }
                             {
                                 calendar.userRole == 'admin' &&
-                                <button onClick={() => {setIsUpdating(true)}}>
+                                <div className='icon' onClick={() => {setIsUpdating(true)}}>
                                     <iconify-icon icon="material-symbols:edit"/>
-                                </button>
+                                </div>
                             }
                             {
                                 calendar.status != 'main' && calendar.userRole == 'admin' &&
-                                <div onClick={() => {setIsPopUpInviteOpen(true)}}>
+                                <div className='icon' onClick={() => {setIsPopUpInviteOpen(true)}}>
                                     <iconify-icon icon="mdi:invite"/>
                                 </div>
                             }
-                            <div>{calendar.name}</div>
-                            <div>{calendar.description}</div>
-                            <div>{calendar.arrangementColor}</div>
-                            <div>{calendar.reminderColor}</div>
-                            <div>{calendar.taskColor}</div>
-                            <div>{calendar.status}</div>
-                            <div>
-                                {
-                                    calendar.users.map(user => (
-                                        <UserContainer key={user.id}
-                                                        user={user}
-                                                        calendar={calendar}
-                                                        setCalendar={setCalendar} />
-                                    ))
-                                }
-                            </div>
                         </div>
-                    }
-                </div>
+                        <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                            <iconify-icon icon="material-symbols:close" />
+                        </div>
+                        <div className='name'>{calendar.name}</div>
+                        <div className='status'>{calendar.status}</div>
+                        <div className='description'>{calendar.description}</div>
+                        <div className='calendar_colors_container'>
+                            <div style={{ color: calendar.arrangementColor }}>Arrangement</div>
+                            <div style={{ color: calendar.reminderColor }}>Reminder</div>
+                            <div style={{ color: calendar.taskColor }}>Task</div>
+                        </div>
+                        <div className='calendar_users_container'>
+                            {
+                                calendar.users.map(user => (
+                                    <UserContainer key={user.id}
+                                                    user={user}
+                                                    calendar={calendar}
+                                                    setCalendar={setCalendar} />
+                                ))
+                            }
+                        </div>
+                    </>
+                }
             </div>
         </>
     );
@@ -192,40 +197,42 @@ function UserContainer({ user, calendar, setCalendar }) {
     }, [isSure]);
     
     return (
-        <div onClick={updateOpen}>
+        <div className='user_container' onClick={updateOpen}>
             {
                 isPopUpSureOpen &&
                 <PopUpSure text={`Do you want to remove ${user.login} from ${calendar.name} calendar?`} 
                             setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
                 
             }
-            <div className="user_icon_outer">
+            <div className="user_icon_outer small">
                 {
                     user.profilePicture
                     ? <img src={getSrc(user.profilePicture)} alt="avatar" />
-                    : <div className='initials'>
-                        {getAvatar(user.fullName)}
-                    </div>
+                    : <>
+                        {getAvatar(user.fullName, ' small')}
+                    </>
                 }
             </div>
-            {user.login}{' '}
+            <div className='user_info'>
+                <div className='login'>{user.login}</div>
+                {
+                    !isUpdating && 
+                    <div className='status'>{user.userRole}</div>
+                }
+            </div>
             {
-                isUpdating 
-                ? <>
-                    <div className='status_select_contatiner'>
-                        <div className='label'>Role:</div>
-                        <Select value={getRoleValue()} options={roleOptions} 
-                                onChange={handleChangeRole} className='status_select' classNamePrefix='status_select' />
-                    </div>
-                    <button onClick={saveRole}>Save</button>
+                isUpdating && 
+                <>
+                    <Select value={getRoleValue()} options={roleOptions} 
+                            onChange={handleChangeRole} className='select' classNamePrefix='select' />
+                    <button className='button' onClick={saveRole}>Save</button>
                 </>
-                : <div>{user.userRole}</div>
             }
             {
                 calendar.userRole == 'admin' && user.id != curUser.id &&
-                <button onClick={() => {setIsPopUpSureOpen(true)}}>
+                <div className='icon delete' onClick={(e) => {setIsPopUpSureOpen(true)}}>
                     <iconify-icon icon="material-symbols:delete-rounded"/>
-                </button>
+                </div>
             }
         </div>
     );
@@ -238,9 +245,9 @@ function UserContainer({ user, calendar, setCalendar }) {
         setRole(event.value);
     }
 
-    function updateOpen() {
-        if (calendar.userRole == 'admin') {
-            setIsUpdating(true);
+    function updateOpen(e) {
+        if (calendar.userRole == 'admin' && e.target.className == 'user_container') {
+            setIsUpdating(!isUpdating);
         }
     }
 
@@ -309,19 +316,25 @@ function UserContainer({ user, calendar, setCalendar }) {
     }
 }
 
-function PopUpDeleteFor({ setIsSure, setIsPopUpOpen }) {
+function PopUpDeleteFor({ calendarName, setIsSure, setIsPopUpOpen }) {
     return (
         <>
             <div className="popup_background sure" onClick={() => {setIsPopUpOpen(false)}} />
-            <div className="popup_container sure">
-                <div className='display_center'>
-                    <div onClick={() => {setIsSure('forAll'); setIsPopUpOpen(false);}}>
+            <div className="popup_container sure large">
+                <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                    <iconify-icon icon="material-symbols:close" />
+                </div>
+                <div className='sure_text'>Do you want to delete {calendarName} calendar?</div>
+                <div className='sure_buttons_container'>
+                    <div className='button negative' onClick={() => {setIsSure('forAll'); setIsPopUpOpen(false);}}>
                         Delete for all
                     </div>
-                    <div onClick={() => {setIsSure('forMe'); setIsPopUpOpen(false);}}>
+                    <div className='button' onClick={() => {setIsSure('forMe'); setIsPopUpOpen(false);}}>
                         Delete just for me
                     </div>
-                    <div onClick={() => {setIsPopUpOpen(false)}}>Don't delete</div>
+                    <div className='button negative' onClick={() => {setIsPopUpOpen(false)}}>
+                        Don't delete
+                    </div>
                 </div>
             </div>
         </>

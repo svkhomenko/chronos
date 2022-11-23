@@ -1,6 +1,5 @@
 import React from "react";
 import { Buffer } from "buffer";
-import moment from "moment";
 import { colors } from "./const_tools";
 
 function getSrc(profilePicture) {
@@ -25,7 +24,7 @@ function getSrc(profilePicture) {
 //     });
 // }
 
-function getAvatar(fullName) {
+function getAvatar(fullName, clssName = '') {
     let fullNameArr = fullName.split(' ');
     let initials = fullNameArr[0][0];
     if (fullNameArr[1]) {
@@ -36,7 +35,7 @@ function getAvatar(fullName) {
     let index = (initials[0].charCodeAt() - 60) % colors.length;
 
     return (
-        <div className='initials' style={{ backgroundColor: colors[index] }}>
+        <div className={'initials' + clssName} style={{ backgroundColor: colors[index] }}>
             {initials}
         </div>
     );

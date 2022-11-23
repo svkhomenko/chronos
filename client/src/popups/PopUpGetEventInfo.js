@@ -4,8 +4,7 @@ import { removeUser } from '../store/slices/userSlice';
 import { setScrollToY, setMessage } from '../store/slices/calendarsSlice';
 import PopUpSure from "./PopUpSure";
 import UpdateEvent from "../calendars/UpdateEvent";
-import { deleteEvent } from "../calendars/calendars_tools";
-import { getDateString } from "../tools/tools_func";
+import { getDateString, deleteEvent } from "../calendars/calendars_tools";
 import { SERVER_URL } from "../const";
 
 function PopUpGetEventInfo({ curEvent, setCurEvent, setEvents, allEvents, setIsPopUpOpen }) {
@@ -41,36 +40,38 @@ function PopUpGetEventInfo({ curEvent, setCurEvent, setEvents, allEvents, setIsP
             <>
                 <div className="popup_background" onClick={() => {setIsPopUpOpen(false)}} />
                 <div className="popup_container">
-                    <div className='display_center'>
-                        {
-                            isUpdating
-                            ? <UpdateEvent curEvent={curEvent} setIsUpdating={setIsUpdating} />
-                            : <div className='post_card no_hr user_form'> 
-                                <button onClick={() => {setIsPopUpSureOpen(true)}}>
+                    {
+                        isUpdating
+                        ? <UpdateEvent curEvent={curEvent} setIsUpdating={setIsUpdating} />
+                        : <>
+                            <div className='icons_container'>
+                                <div className='icon' onClick={() => {setIsPopUpSureOpen(true)}}>
                                     <iconify-icon icon="material-symbols:delete-rounded"/>
-                                </button>
-                                <button onClick={() => {setIsUpdating(true)}}>
+                                </div>
+                                <div className='icon' onClick={() => {setIsUpdating(true)}}>
                                     <iconify-icon icon="material-symbols:edit"/>
-                                </button>
+                                </div>
                                 {
                                     curEvent.category == "task" &&
-                                    <button onClick={setCompleted}>
-                                        <iconify-icon icon="emojione-monotone:heavy-check-mark" />
-                                    </button>
+                                    <div className='icon' onClick={setCompleted}>
+                                        {
+                                            curEvent.completed
+                                            ? <iconify-icon icon="ic:outline-check-box" />
+                                            : <iconify-icon icon="ic:outline-check-box-outline-blank" />
+                                        }
+                                    </div>
                                 }  
-                                <div>{curEvent.name}</div>
-                                <div>{curEvent.description}</div>
-                                <div>{getDateString(curEvent.dateFrom)}{' - '}{getDateString(curEvent.dateTo)}</div>
-                                <div>{curEvent.category}</div>
-                                <div>{curEvent.color}</div>
-                                <div>{getCalendar().name}</div>
-                                {
-                                    curEvent.category == "task" &&
-                                    <div>{'' + curEvent.completed}</div>                        
-                                }                      
+                            </div> 
+                            <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                                <iconify-icon icon="material-symbols:close" />
                             </div>
-                        }
-                    </div>
+                            <div>{getDateString(curEvent)}</div>
+                            <div className='name'>{curEvent.name}</div>
+                            <div>{curEvent.category}</div>
+                            <div className='description'>{curEvent.description}</div>
+                            <div>{getCalendar().name}</div>                    
+                        </>
+                    }
                 </div>
             </>
         </>

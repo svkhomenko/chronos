@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeUser } from '../store/slices/userSlice';
-import moment from 'moment';
-import { isAllDay } from '../calendars/calendars_tools';
+import { getDateArr } from "../calendars/calendars_tools";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
 import { SERVER_URL } from "../const";
 
@@ -71,7 +70,7 @@ function SearchBar() {
                                 <div className='event_name'>{event.name}</div>
                                 <div>{getCalendar(event).name}</div> 
                             </div>
-                            {getDateString(event)}
+                            {getCurDateString(event)}
                         </div>
                     ))}
                 </div>
@@ -79,30 +78,22 @@ function SearchBar() {
         </div>
     );
 
-    function getDateString(event) {
-        if (event.category == 'arrangement') {
+    function getCurDateString(event) {
+        let dates = getDateArr(event);
+        if (!dates[1]) {
             return (
                 <div>
-                    <div>{moment(new Date(event.dateFrom)).format('MMM D YYYY, h:mm a')}</div>
-                    <div>{moment(new Date(event.dateTo)).format('MMM D YYYY, h:mm a')}</div>
+                    <div>{dates[0]}</div>
                 </div>
             );
         }
         else {
-            if (isAllDay(event)) {
-                return (
-                    <div>
-                        {moment(new Date(event.dateFrom)).format('MMM D YYYY')}
-                    </div>
-                );
-            }
-            else {
-                return (
-                    <div>
-                        {moment(new Date(event.dateFrom)).format('MMM D YYYY, h:mm a')}
-                    </div>
-                );
-            }
+            return (
+                <div>
+                    <div>{dates[0]}</div>
+                    <div>{dates[1]}</div>
+                </div>
+            );
         }
     }
 

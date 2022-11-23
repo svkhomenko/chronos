@@ -56,13 +56,13 @@ function CreateEvent() {
                     <div className='message error'>{descriptionMessage}</div>
                     <textarea value={description} onChange={handleChangeDescription} className="large" />
 
-                    <div className='status_select_contatiner'>
+                    <div>
                         <div className='label'>Category:</div>
                         <Select value={getCategoryValue()} options={categoryOptions} 
                                 onChange={handleChangeCategory} className='select' classNamePrefix='select' />
                     </div>
 
-                    <div className='status_select_contatiner'>
+                    <div>
                         <div className='label'>Calendar:</div>
                         <Select value={getCalendarValue()} options={calendarOptions} 
                                 onChange={handleChangeCalendar} className='select' classNamePrefix='select' />

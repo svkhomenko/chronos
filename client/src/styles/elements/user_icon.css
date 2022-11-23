@@ -15,6 +15,11 @@
     overflow: hidden;
 }
 
+.user_icon_outer.small {
+    width: 30px;
+    height: 30px;
+}
+
 .user_icon_outer img {
     width: auto;
     height: 100%;
@@ -29,5 +34,11 @@
     font-size: 30px;
     color: rgba(256, 256, 256, 0.7);
     cursor: pointer;
+}
+
+.user_icon_outer .initials.small {
+    line-height: 30px;
+    font-size: 15px;
+    cursor: default;
 }
 

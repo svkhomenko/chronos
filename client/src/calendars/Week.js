@@ -177,8 +177,8 @@ function Week({ holidays, widthTD, heightTD }) {
                             week.map(date => (
                                 <th key={date}>
                                     {date}---
-                                    {getHolidaysOnDate(date, holidays).map(holiday => (
-                                        holiday.summary
+                                    {getHolidaysOnDate(date, holidays).map((holiday, index) => (
+                                        <div key={index}>{holiday.summary}</div>
                                     ))}----
                                     {getAllDayEvents(date, events).map(event => (
                                         <RndHeaderEvent key={event.id}
