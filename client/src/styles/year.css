@@ -22,6 +22,10 @@
     color: var(--dark-green-color);
 }
 
+.year .not_cur_month_date {
+    color: grey;
+}
+
 .year_month .cur_date {
     background-color: var(--green-color);
     color: white;
@@ -45,9 +49,5 @@
 
 .year_month .day_date:hover {
     background-color: var(--light-grey-color);
-}
-
-.year .not_cur_month_date {
-    color: grey;
 }
 

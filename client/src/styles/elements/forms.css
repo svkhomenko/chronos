@@ -51,6 +51,11 @@
     box-shadow: none !important;
 }
 
+.select.small {
+    display: inline-block;
+    width: 120px;
+}
+
 .select__control--is-focused {
     border: 2px solid var(--dark-green-color) !important;
 }
@@ -167,7 +172,7 @@ textarea:focus {
     background-color: var(--light-green-color);
     text-align: center;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 1em;
     font-weight: bold;
     color: var(--dark-green-color);
 }

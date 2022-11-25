@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser, removeUser } from './store/slices/userSlice';
 import { removeCalendars, removeCurDate, removeRepresentation } from './store/slices/calendarsSlice';
+import moment from "moment";
 import { SERVER_URL } from "./const";
 import "./styles/main.css";
 
@@ -25,6 +26,7 @@ import ErrorPage from "./elements/ErrorPage";
 
 function App() {
     const curUser = useSelector((state) => state.user);
+    const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
     
     useEffect(() => {
@@ -41,9 +43,15 @@ function App() {
                     return response.json();
                 }
                 dispatch(removeUser());
-                dispatch(removeCalendars());
-                dispatch(removeCurDate());
-                dispatch(removeRepresentation());
+                if (curCalendars.calendars.length) {
+                    dispatch(removeCalendars());
+                }
+                if (!moment(new Date(curCalendars.curDate)).isSame(moment(), 'day')) {
+                    dispatch(removeCurDate());
+                }
+                if (curCalendars.representation != 'week') {
+                    dispatch(removeRepresentation());
+                }
             })
             .then((data) => {
                 if (data) {
@@ -61,9 +69,15 @@ function App() {
         }
         else  {
             dispatch(removeUser());
-            dispatch(removeCalendars());
-            dispatch(removeCurDate());
-            dispatch(removeRepresentation());
+            if (curCalendars.calendars.length) {
+                dispatch(removeCalendars());
+            }
+            if (!moment(new Date(curCalendars.curDate)).isSame(moment(), 'day')) {
+                dispatch(removeCurDate());
+            }
+            if (curCalendars.representation != 'week') {
+                dispatch(removeRepresentation());
+            }
         }
     }, []);
 

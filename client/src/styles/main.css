@@ -68,13 +68,6 @@ h2 {
     font-size: 24px;
 }
 
-/* .small_title {
-    margin: 10px 0;
-    font-size: 30px;
-    font-weight: 700;
-    color: var(--dark-green-color);
-} */
-
 .message {
     margin: 3px 0;
 }
@@ -104,14 +97,6 @@ h2 {
 .display_center_vertical {
     text-align: center;
 }
-
-/* .display_center.hr {
-    border-bottom: 1px solid var(--green-color);
-} */
-
-/* .no_hr {
-    border: none;
-} */
 
 /* completed */
 

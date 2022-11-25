@@ -78,7 +78,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                     <ThemeProvider theme={customTheme}>
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DateTimePicker
-                                renderInput={(params) => <TextField {...params} />}
+                                renderInput={(params) => <TextField size='small' {...params} />}
                                 value={dateFrom}
                                 onChange={(newValue) => {
                                     setDateFrom(newValue);
@@ -95,7 +95,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                             <ThemeProvider theme={customTheme}>
                                 <LocalizationProvider dateAdapter={AdapterMoment}>
                                     <DateTimePicker
-                                        renderInput={(params) => <TextField {...params} />}
+                                        renderInput={(params) => <TextField size='small' {...params} />}
                                         value={dateTo}
                                         onChange={(newValue) => {
                                             setDateTo(newValue);
@@ -188,6 +188,11 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
         setDateToMessage('');
         
         if (isDataValid()) {
+            let dTo = dateTo;
+            if (category != "arrangement") {
+                dTo = moment(dateFrom).add(10, 'minutes');
+            }
+
             fetch(SERVER_URL + `/api/calendars/${calendar}/events`, {
                 method: 'POST',
                 headers: {
@@ -199,7 +204,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                     description,
                     category,
                     dateFrom,
-                    dateTo,
+                    dateTo: dTo,
                     color
                 })
             })

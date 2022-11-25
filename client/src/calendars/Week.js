@@ -66,7 +66,7 @@ function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, ha
                     onDragStop={onBoxDragStop}
                     onDragStart={onBoxDragStart}>
                 <div style={{height:'100%'}} onClick={handleClick}>
-                    {event.name}{' '}{styleColor.backgroundColor}
+                    {event.name}
                 </div>
             </Rnd>
         </div>
@@ -267,7 +267,7 @@ function Week({ holidays, widthTD, heightTD }) {
     function getEventSize(event) {
         if (event.category != "arrangement") {
             return {
-                width: widthTD,
+                width: widthTD / event.widthCollision,
                 height: "23px"
             };  
         }
@@ -368,7 +368,7 @@ function Week({ holidays, widthTD, heightTD }) {
             temp.push(event);
             temp.forEach(tempEvent => tempEvent.widthCollision++);
         });
-
+        
         data.forEach(event => {
             let dateFrom = moment(event.dateFrom);
             let dateTo = moment(event.dateTo);

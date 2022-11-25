@@ -50,7 +50,7 @@ function UpdateEvent({ curEvent, setIsUpdating }) {
                 <ThemeProvider theme={customTheme}>
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                         <DateTimePicker
-                            renderInput={(params) => <TextField {...params} />}
+                            renderInput={(params) => <TextField size='small' {...params} />}
                             value={dateFrom}
                             onChange={(newValue) => {
                                 setDateFrom(newValue);
@@ -67,7 +67,7 @@ function UpdateEvent({ curEvent, setIsUpdating }) {
                         <ThemeProvider theme={customTheme}>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DateTimePicker
-                                    renderInput={(params) => <TextField {...params} />}
+                                    renderInput={(params) => <TextField size='small' {...params} />}
                                     value={dateTo}
                                     onChange={(newValue) => {
                                         setDateTo(newValue);

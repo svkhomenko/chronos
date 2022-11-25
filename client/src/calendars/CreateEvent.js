@@ -74,7 +74,7 @@ function CreateEvent() {
                     <ThemeProvider theme={customTheme}>
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DateTimePicker
-                                renderInput={(params) => <TextField {...params} />}
+                                renderInput={(params) => <TextField size='small' {...params} />}
                                 value={dateFrom}
                                 onChange={(newValue) => {
                                     setDateFrom(newValue);
@@ -91,7 +91,7 @@ function CreateEvent() {
                             <ThemeProvider theme={customTheme}>
                                 <LocalizationProvider dateAdapter={AdapterMoment}>
                                     <DateTimePicker
-                                        renderInput={(params) => <TextField {...params} />}
+                                        renderInput={(params) => <TextField size='small' {...params} />}
                                         value={dateTo}
                                         onChange={(newValue) => {
                                             setDateTo(newValue);
@@ -184,6 +184,11 @@ function CreateEvent() {
         setDateToMessage('');
         
         if (isDataValid()) {
+            let dTo = dateTo;
+            if (category != "arrangement") {
+                dTo = moment(dateFrom).add(10, 'minutes');
+            }
+
             fetch(SERVER_URL + `/api/calendars/${calendar}/events`, {
                 method: 'POST',
                 headers: {
@@ -195,7 +200,7 @@ function CreateEvent() {
                     description,
                     category,
                     dateFrom,
-                    dateTo,
+                    dateTo: dTo,
                     color
                 })
             })

@@ -6,7 +6,8 @@ const initialState = {
     scrollToY: 0,
     message: '',
     curDate: new Date(),
-    representation: "week"
+    representation: "week",
+    isDropdownOpen: false
 }
 
 export const calendarsSlice = createSlice({
@@ -42,10 +43,16 @@ export const calendarsSlice = createSlice({
         },
         removeRepresentation(state) {
             state.representation = "week";
+        },
+        setIsDropdownOpen: (state, action) => {
+            state.isDropdownOpen = action.payload.isDropdownOpen;
+        },
+        removeIsDropdownOpen(state) {
+            state.isDropdownOpen = false;
         }
     }
 });
 
-export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY, setMessage, removeMessage, setCurDate, removeCurDate, setRepresentation, removeRepresentation } = calendarsSlice.actions;
+export const { setCalendars, removeCalendars, setScrollToY, removeScrollToY, setMessage, removeMessage, setCurDate, removeCurDate, setRepresentation, removeRepresentation, setIsDropdownOpen, removeIsDropdownOpen } = calendarsSlice.actions;
 export default calendarsSlice.reducer;
 
