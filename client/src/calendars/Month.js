@@ -8,14 +8,14 @@ import { SERVER_URL } from "../const";
 import PopUpCreateEvent from "../popups/PopUpCreateEvent";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
 import PopUpMoreEvents from "../popups/PopUpMoreEvents";
-import { fillArray, getHolidaysOnDate, getEventColor, eventsSort, updateEvent } from "./calendars_tools";
+import { fillArray, getHolidaysOnDate, getEventColor, eventsSort, getEventCompletedClassName, getCurDateClassName, updateEvent } from "./calendars_tools";
 
-function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
+function RndEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
     const [isDragging, setIsDragging] = useState(false);
 
     return (
-        <div className='header_event' size={size}>
-            <Rnd className='event_rnd' data-id={event.id}
+        <div className='event' size={size}>
+            <Rnd className={'event_rnd ' + getEventCompletedClassName(event)} data-id={event.id}
                     style={styleColor}
                     size={size}
                     enableResizing={false}
@@ -66,16 +66,16 @@ function EventsForDay({ events, setEvents, allEvents, date, holidays, getEventCo
                 <PopUpMoreEvents events={events} setEvents={setEvents} allEvents={allEvents} holidays={holidays} date={date} setIsPopUpOpen={setIsPopUpMoreEventsOpen} />
             }
             {(events.slice(0, maxEvents)).map(event => (
-                <RndHeaderEvent key={event.id}
+                <RndEvent key={event.id}
                             event={event}
                             styleColor={getEventColor(event, curCalendars.calendars)}
-                            size={{width: widthTD}}
+                            size={{width: widthTD, height: "23px"}}
                             handleDragStop={handleDragStop}
                             openEventPopup={openEventPopup} />
             ))}
             {
                 events.length > maxEvents &&
-                <div onClick={showMoreEvents}>
+                <div className='month_more_events' onClick={showMoreEvents}>
                     {`${events.length - maxEvents} more event${events.length == maxEvents + 1 ? '' : 's'}`}
                 </div>
             }
@@ -173,14 +173,13 @@ function Month({ holidays, widthTD, heightTD }) {
                             {(month.slice(row * 7, (row + 1) * 7)).map(date => {
                                 let hols = getHolidaysOnDate(date, holidays);
                                 return (
-                                    <td key={date} data-date={date}>
-                                        <div onClick={() => {showThatDayOnWeek(date)}}>
+                                    <td key={date} data-date={date} className={getCurDateClassName(date, curCalendars.curDate)}>
+                                        <div className='date' onClick={() => {showThatDayOnWeek(date)}}>
                                             {moment(new Date(date)).format('D MMM')}
                                         </div>
-                                        ----
                                         {hols.map((holiday, index) => (
                                             <div key={index}>{holiday.summary}</div>
-                                        ))}----   
+                                        ))} 
                                         <EventsForDay events={getEventsForThisDay(date)}
                                                     setEvents={setEvents}
                                                     allEvents={events}

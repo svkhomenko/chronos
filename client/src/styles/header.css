@@ -91,5 +91,6 @@ header .user_icon_outer {
 
 header .user_icon_container:hover .initials {
     color: rgba(256, 256, 256, 0.7);
+    cursor: pointer;
 }
 

@@ -22,7 +22,7 @@ function PopUpMoreEvents({ events, setEvents, allEvents, holidays, date, setIsPo
                 <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
                     <iconify-icon icon="material-symbols:close" />
                 </div>
-                <div className="cur_date button" onClick={showThatDayOnWeek}>
+                <div className="cur_date_button button" onClick={showThatDayOnWeek}>
                     {moment(new Date(date)).format('ddd, Do MMMM YYYY')}
                 </div>
                 {holidays.map((holiday, index) => (
@@ -38,6 +38,10 @@ function PopUpMoreEvents({ events, setEvents, allEvents, holidays, date, setIsPo
                         ))
                     }
                 </div>
+                {
+                    holidays.length == 0 && events.length == 0 &&
+                    <div className='no_events'>No scheduled events</div>
+                }
             </div>
         </>
     );

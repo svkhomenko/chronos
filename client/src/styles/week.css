@@ -1,7 +1,8 @@
 @import './_vars.css';
 
 .week table {
-    width: 100%;
+    width: 114%;
+    margin-left: -14%;
     border-collapse: collapse;
     table-layout: fixed;
 }
@@ -10,16 +11,38 @@
 .week th {
     width: 2%;
     height: 50px;
-    border: 1px solid var(--grey-color);
+    border: 1px solid var(--light-grey-color);
     box-sizing: border-box;
+    font-weight: 400;
 }
 
 .week td#td0 {
     position: relative;
 }
 
-.week td.half_hour {
-    width: 10px;
+.week th:not(.half_hour) {
+    border-bottom-color: var(--dark-green-color);
+    vertical-align: top;
+}
+
+.week .half_hour {
+    padding-right: 1.5%;
+    border: none;
+    text-align: end;
+}
+
+.week th .date {
+    margin: 3px 0;
+    font-weight: 700;
+    color: var(--dark-green-color);
+}
+
+.week .cur_date {
+    background-color: var(--light-green-color);
+}
+
+.week .today {
+    background-color: var(--grey-green-color);
 }
 
 .week .event {
@@ -28,10 +51,15 @@
 
 .week .header_event {
     position: relative;
+    padding: 2px 5px;
     min-height: 20px;
 }
 
 .week .event_rnd {
-    border: 1px solid blue;
+    overflow: hidden;
+    word-wrap: break-word;
+    padding: 2px 5px;
+    border: 1px solid white;
+    color: white;
 }
 

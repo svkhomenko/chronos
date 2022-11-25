@@ -22,50 +22,51 @@ function UpdateProfile({ setIsUpdating }) {
     const [profilePictureMessage, setProfilePictureMessage] = useState('');
 
     return (
-        <div className='display_center'>
-            <div className={'post_card update_post user_form no_hr'}> 
-                <h2>Update profile</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className='label'>Login:</div>
-                    <div className='message error'>{loginMessage}</div>
-                    <input type="text" value={login} onChange={handleChangeLogin} className="input" />
-
-                    <div className='label'>Email:</div>
-                    <div className='message error'>{emailMessage}</div>
-                    <input type="text" value={email} onChange={handleChangeEmail} className="input" />
-
-                    <div className='label'>Full name:</div>
-                    <div className='message error'>{fullNameMessage}</div>
-                    <input type="text" value={fullName} onChange={handleChangeFullName} className="input" />
-
-                    <div>
-                        <div className='label'>Avatar:</div>
-                        {
-                            curAvatar 
-                            && <div className="user_icon_outer post_images_outer update" >
-                                <img src={getSrc(curAvatar)} alt="avatar" />
-                                <div onClick={handleChangeDeleteAvatar} className="delete_image">
-                                    <iconify-icon icon="iwwa:delete" />
-                                </div>
-                            </div>
-                        }
-                        <div className='message error'>{profilePictureMessage}</div>
-                        <label htmlFor="file-upload_update_user" className='button negative file_upload_label'>
-                            Upload Files
-                        </label>
-                        <input type="file" id="file-upload_update_user" accept="image/*"
-                                onChange={handleChangeProfilePicture} className="input_file" />
-                        {
-                            profilePicture &&
-                            <div className='upload_files_container'>
-                                {profilePicture.name}{' - '}{(profilePicture.size / 1024).toFixed(2)}{' KB'}
-                            </div>
-                        }
-                    </div>
-                    <input type="submit" value="Update profile" className='button submit' />
-                </form>
+        <>
+            <div className='icon close'  onClick={() => {setIsUpdating(false)}}>
+                <iconify-icon icon="material-symbols:close" />
             </div>
-        </div>
+            <h2>Update profile</h2>
+            <form onSubmit={handleSubmit}>
+                <div className='label'>Login:</div>
+                <div className='message error'>{loginMessage}</div>
+                <input type="text" value={login} onChange={handleChangeLogin} className="input" />
+
+                <div className='label'>Email:</div>
+                <div className='message error'>{emailMessage}</div>
+                <input type="text" value={email} onChange={handleChangeEmail} className="input" />
+
+                <div className='label'>Full name:</div>
+                <div className='message error'>{fullNameMessage}</div>
+                <input type="text" value={fullName} onChange={handleChangeFullName} className="input" />
+
+                <div>
+                    <div className='label'>Avatar:</div>
+                    {
+                        curAvatar 
+                        && <div className="user_icon_outer user_update_image_outer" >
+                            <img src={getSrc(curAvatar)} alt="avatar" />
+                            <div onClick={handleChangeDeleteAvatar} className="delete_image">
+                                <iconify-icon icon="iwwa:delete" />
+                            </div>
+                        </div>
+                    }
+                    <div className='message error'>{profilePictureMessage}</div>
+                    <label htmlFor="file-upload_update_user" className='button negative file_upload_label'>
+                        Upload Files
+                    </label>
+                    <input type="file" id="file-upload_update_user" accept="image/*"
+                            onChange={handleChangeProfilePicture} className="input_file" />
+                    {
+                        profilePicture &&
+                        <div className='upload_file_container'>
+                            {profilePicture.name}{' - '}{(profilePicture.size / 1024).toFixed(2)}{' KB'}
+                        </div>
+                    }
+                </div>
+                <input type="submit" value="Update profile" className='button submit' />
+            </form>
+        </>
     );
     
     function handleChangeLogin(event) {

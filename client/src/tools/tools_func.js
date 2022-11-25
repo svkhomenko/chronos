@@ -8,22 +8,6 @@ function getSrc(profilePicture) {
     }
 }
 
-// function getAvatar(fullName) {
-//     let fullNameArr = fullName.split(' ');
-//     let initials = fullNameArr[0][0];
-//     if (fullNameArr[1]) {
-//         initials += fullNameArr[1][0];
-//     }
-//     initials = initials.toUpperCase();
-
-//     let index = (initials[0].charCodeAt() - 60) % colors.length;
-    
-//     return ({
-//         initials,
-//         color: colors[index]
-//     });
-// }
-
 function getAvatar(fullName, clssName = '') {
     let fullNameArr = fullName.split(' ');
     let initials = fullNameArr[0][0];
@@ -45,14 +29,6 @@ function getDateString(dateStr) {
     let date = new Date(dateStr);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 }
-
-// function getDateString(dateStr) {
-//     let date = moment(new Date(dateStr));
-//     // return date.format('MMMM Do YYYY, h:mm:ss a');
-//     return date.format('MMM d YYYY, h:mm a');
-//     // return date.format('lll');
-//     // return date.calendar();
-// }
 
 export {
     getSrc,

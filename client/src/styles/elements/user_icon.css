@@ -33,12 +33,11 @@
     line-height: 60px;
     font-size: 30px;
     color: rgba(256, 256, 256, 0.7);
-    cursor: pointer;
+    cursor: default;
 }
 
 .user_icon_outer .initials.small {
     line-height: 30px;
     font-size: 15px;
-    cursor: default;
 }
 

@@ -14,16 +14,63 @@
     box-sizing: border-box;
 }
 
+.month th {
+    color: var(--dark-green-color);
+}
+
 .month td {
-    height: 150px;
+    vertical-align: top;
+    height: 140px;
+}
+
+.month .cur_date {
+    background-color: var(--light-green-color);
+}
+
+.month .today {
+    background-color: var(--grey-green-color);
+}
+
+.month td .date {
+    margin: 0 auto;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.month td .date:hover {
+    background-color: var(--off-white-color);
+    color: var(--dark-green-color);
+}
+
+.month .event {
+    margin-top: 2px;
+    position: relative;
+    min-height: 23px;
 }
 
 .month .event_rnd {
-    border: 1px solid blue;
+    padding: 2px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid white;
+    color: white;
 }
 
-.month .header_event {
-    position: relative;
-    min-height: 20px;
+.month .month_more_events {
+    margin-top: 3px;
+    background-color: var(--off-white-color);
+    color: var(--dark-green-color);
+    cursor: pointer;
+}
+
+.month .month_more_events:hover {
+    background-color: var(--light-grey-color);
+    color: var(--light-green-color);
+    cursor: pointer;
 }
 

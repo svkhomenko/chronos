@@ -7,14 +7,14 @@ import { Rnd } from 'react-rnd';
 import { SERVER_URL } from "../const";
 import PopUpCreateEvent from "../popups/PopUpCreateEvent";
 import PopUpGetEventInfo from "../popups/PopUpGetEventInfo";
-import { fillArray, getHolidaysOnDate, isAllDay, getAllDayEvents, getEventColor, updateEvent } from "./calendars_tools";
+import { fillArray, getHolidaysOnDate, isAllDay, getAllDayEvents, getEventColor, getEventCompletedClassName, getCurDateClassName, updateEvent } from "./calendars_tools";
 
 function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
     const [isDragging, setIsDragging] = useState(false);
 
     return (
         <div className='header_event' size={size}>
-            <Rnd className='event_rnd' data-id={event.id}
+            <Rnd className={'event_rnd ' + getEventCompletedClassName(event)} data-id={event.id}
                     style={styleColor}
                     size={size}
                     enableResizing={false}
@@ -58,7 +58,7 @@ function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, ha
 
     return (
         <div className='event' style={stylePosition}>
-            <Rnd className='event_rnd' data-id={event.id}
+            <Rnd className={'event_rnd ' + getEventCompletedClassName(event)} data-id={event.id}
                     style={styleColor}
                     size={size}
                     enableResizing={event.category != "arrangement" ? false : {top:true, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
@@ -66,7 +66,7 @@ function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, ha
                     onDragStop={onBoxDragStop}
                     onDragStart={onBoxDragStart}>
                 <div style={{height:'100%'}} onClick={handleClick}>
-                    {event.name}
+                    {event.name}{' '}{styleColor.backgroundColor}
                 </div>
             </Rnd>
         </div>
@@ -172,14 +172,14 @@ function Week({ holidays, widthTD, heightTD }) {
             <table onClick={createEvent}>
                 <thead>
                     <tr>
-                        <th/>
+                        <th className='half_hour'/>
                         {
                             week.map(date => (
-                                <th key={date}>
-                                    {date}---
+                                <th key={date} className={getCurDateClassName(date, curCalendars.curDate)}>
+                                    <div className='date'>{moment(new Date(date)).format('ddd, D MMM')}</div>
                                     {getHolidaysOnDate(date, holidays).map((holiday, index) => (
                                         <div key={index}>{holiday.summary}</div>
-                                    ))}----
+                                    ))}
                                     {getAllDayEvents(date, events).map(event => (
                                         <RndHeaderEvent key={event.id}
                                                         event={event}
@@ -204,7 +204,8 @@ function Week({ holidays, widthTD, heightTD }) {
                                                 <td key={day}
                                                     data-week={week[day]}
                                                     data-time={hour}
-                                                    id={"td" + (hour + index)}>
+                                                    id={"td" + (hour + index)}
+                                                    className={getCurDateClassName(week[day], curCalendars.curDate)}>
                                                     {
                                                         (hour == 0 && index == 0) &&
                                                         <>
@@ -227,12 +228,13 @@ function Week({ holidays, widthTD, heightTD }) {
                                         }
                                     </tr>
                                     <tr>
-                                        <td/>
+                                        <td className='half_hour' />
                                         {
                                             days.map((day) => (
                                                 <td key={day}
                                                     data-week={week[day]}
-                                                    data-time={+hour + 0.5} />
+                                                    data-time={+hour + 0.5}
+                                                    className={getCurDateClassName(week[day], curCalendars.curDate)} />
                                             ))
                                         }
                                     </tr>
@@ -266,7 +268,7 @@ function Week({ holidays, widthTD, heightTD }) {
         if (event.category != "arrangement") {
             return {
                 width: widthTD,
-                height: 20
+                height: "23px"
             };  
         }
 

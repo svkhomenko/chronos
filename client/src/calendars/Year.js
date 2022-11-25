@@ -4,7 +4,7 @@ import { removeUser } from '../store/slices/userSlice';
 import moment from 'moment';
 import { SERVER_URL } from "../const";
 import PopUpMoreEvents from "../popups/PopUpMoreEvents";
-import { fillArray, getHolidaysOnDate, isAllDay, getEventColor, eventsSort, updateEvent } from "./calendars_tools";
+import { fillArray, getHolidaysOnDate, eventsSort, getCurDateClassName } from "./calendars_tools";
 
 function Year({ holidays }) {
     const curUser = useSelector((state) => state.user);
@@ -13,7 +13,7 @@ function Year({ holidays }) {
 
     const [year, setYear] = useState(getYear());
 
-    const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
     const rows = fillArray(6);
 
     const [events, setEvents] = useState([]);
@@ -29,9 +29,13 @@ function Year({ holidays }) {
             {
                 year.map(month => (
                     <div key={month.month} className='year_month'>
-                        {moment(month.month).format('MMMM')}
                         <table>
                             <thead>
+                                <tr>
+                                    <th colSpan='7' className='month_date'>
+                                        {moment(month.month).format('MMMM')}
+                                    </th>
+                                </tr>
                                 <tr>
                                     {daysOfWeek.map(dayOfWeek => (
                                         <th key={dayOfWeek}>{dayOfWeek}</th>
@@ -43,7 +47,7 @@ function Year({ holidays }) {
                                     <tr key={row}>
                                         {(month.dates.slice(row * 7, (row + 1) * 7)).map(date => (
                                             <td key={date}>
-                                                <div className={getClassNameCurMonth(month.month, date)}
+                                                <div className={"day_date " + getClassNameCurMonth(month.month, date) + ' ' + getCurDateClassName(date, curCalendars.curDate)}
                                                         data-date={date}
                                                         onClick={getEventsForDate}>
                                                     {moment(new Date(date)).format('D')}

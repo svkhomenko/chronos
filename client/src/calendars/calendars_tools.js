@@ -111,6 +111,18 @@ function getDateString(event) {
     }
 }
 
+function getCurDateClassName(date, curDate) {
+    let clssName = '';
+    date = moment(new Date(date));
+    if (date.isSame(moment(new Date(curDate)), 'day')) {
+        clssName = 'cur_date';
+    }
+    if (date.isSame(moment(), 'day')) {
+        clssName = 'today';
+    }
+    return clssName;
+}
+
 function updateEvent(eventId, body, curUser, successFunction, deleteUser) {
     fetch(SERVER_URL + `/api/events/${eventId}}`, {
         method: 'PATCH',
@@ -181,6 +193,7 @@ export {
     getEventCompletedClassName,
     getDateArr,
     getDateString,
+    getCurDateClassName,
     updateEvent,
     deleteEvent
 };

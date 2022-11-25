@@ -60,33 +60,35 @@ function PopUpProfile({ setIsPopUpOpen }) {
                 {
                     isUpdating
                     ? <UpdateProfile setIsUpdating={setIsUpdating} />
-                    : <div className='user_page hr'>
-                        <div className='buttons_container'>
-                            <button onClick={() => {setIsUpdating(true)}} className="button negative">
+                    : <>
+                        <div className='icons_container'>
+                            <div className='icon' onClick={() => {setIsUpdating(true)}}>
                                 <iconify-icon icon="material-symbols:edit"/>
-                            </button>
-                            <span onClick={() => {setIsPopUpSureOpen(true)}} className="like_outer delete">
+                            </div>
+                            <div className='icon' onClick={() => {setIsPopUpSureOpen(true)}}>
                                 <iconify-icon icon="material-symbols:delete-rounded"/>
-                            </span>
+                            </div>
+                        </div>
+                        <div className='icon close' onClick={() => {setIsPopUpOpen(false)}}>
+                            <iconify-icon icon="material-symbols:close" />
                         </div>
                         <div className='user_container'>
                             <div className="user_icon_outer">
                                 {
                                     curUser.profilePicture
                                     ? <img src={getSrc(curUser.profilePicture)} alt="avatar" />
-                                    : <div className='initials'>
+                                    : <>
                                         {getAvatar(curUser.fullName)}
-                                    </div>
+                                    </>
                                 }
                             </div>
-                            <div className='info'>
+                            <div className='user_info'>
                                 <div className='login'>{curUser.login}</div>
-                                <div>{curUser.fullName}</div>
-                                <div>{curUser.email}</div>
-                                <div>{curUser.status}</div>
+                                <div className='status'>{curUser.fullName}</div>
+                                <div className='status'>{curUser.email}</div>
                             </div>
                         </div>
-                    </div>
+                    </>
                 }
             </div>
         </>

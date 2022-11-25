@@ -1,0 +1,26 @@
+@import './_vars.css';
+
+.sidebar {
+    
+}
+
+/* dropdown */
+
+.dropdown {
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    background-color: var(--off-white-color);
+    box-shadow: 10px 0px 5px var(--grey-color);
+}
+
+.dropdown .icon.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+
