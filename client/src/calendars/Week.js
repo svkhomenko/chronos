@@ -21,7 +21,7 @@ function RndHeaderEvent({ event, styleColor, size, handleDragStop, openEventPopu
                     dragAxis='x'
                     onDragStop={onBoxDragStop}
                     onDragStart={onBoxDragStart}>
-                <div style={{height:'100%'}} onClick={handleClick}>
+                <div style={{height:'100%'}} onClick={handleClick} onTouchEnd={handleClick}>
                     {event.name}
                 </div>
             </Rnd>
@@ -65,7 +65,7 @@ function RndEvent({ event, stylePosition, styleColor, size, handleResizeStop, ha
                     onResizeStop={handleResizeStop}
                     onDragStop={onBoxDragStop}
                     onDragStart={onBoxDragStart}>
-                <div style={{height:'100%'}} onClick={handleClick}>
+                <div style={{height:'100%'}} onClick={handleClick} onTouchEnd={handleClick}>
                     {event.name}
                 </div>
             </Rnd>
@@ -266,8 +266,12 @@ function Week({ holidays, widthTD, heightTD }) {
 
     function getEventSize(event) {
         if (event.category != "arrangement") {
+            let width = widthTD;
+            if (!isAllDay(event)) {
+                width = widthTD / event.widthCollision
+            }
             return {
-                width: widthTD / event.widthCollision,
+                width: width,
                 height: "23px"
             };  
         }
@@ -310,7 +314,7 @@ function Week({ holidays, widthTD, heightTD }) {
         else if (direction == "top") {
             body.dateFrom = moment(new Date(event.dateFrom)).subtract(deltaHours, "hours");
         }
-        
+
         updateEvent(event.id, body, curUser, 
             () => {
                 dispatch(setScrollToY({scrollToY: window.pageYOffset}));
@@ -334,7 +338,7 @@ function Week({ holidays, widthTD, heightTD }) {
             body.dateTo = moment(body.dateTo).add(deltaDays, "days");
             body.dateFrom = moment(body.dateFrom).add(deltaDays, "days");
         }
-        
+
         updateEvent(event.id, body, curUser, 
             () => {
                 dispatch(setScrollToY({scrollToY: window.pageYOffset}));

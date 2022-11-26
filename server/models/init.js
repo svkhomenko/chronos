@@ -90,15 +90,13 @@ Event.belongsTo(Calendar, CalendarEventSettings);
 
 // Recreating the database and filling it with test data
 
-// sequelize.sync({ force: true })
-// .then(() => {
-//     require('./createTestData')(sequelize);
-// });
+sequelize.sync({ force: true })
+.then(() => {
+    require('./createTestData')(sequelize);
+});
 
 // Uncomment this and comment out the sync above if you don't want to recreate the database
-sequelize.sync();
-
-// sequelize.sync({ alter: true });
+// sequelize.sync();
 
 const db = {
     sequelize: sequelize

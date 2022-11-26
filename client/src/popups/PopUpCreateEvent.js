@@ -189,7 +189,7 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
         
         if (isDataValid()) {
             let dTo = dateTo;
-            if (category != "arrangement") {
+            if (category != "arrangement" && !allDay) {
                 dTo = moment(dateFrom).add(10, 'minutes');
             }
 
@@ -212,9 +212,15 @@ function PopUpCreateEvent({ date, setIsPopUpOpen }) {
                 if (!response.ok) {
                     throw response;
                 }
-                dispatch(setScrollToY({scrollToY: window.pageYOffset}));
                 dispatch(setMessage({ message: "Event was successfully created" }));
-                window.location.reload();
+                let chosenCalendar = curCalendars.calendars.find(c => c.id == calendar); 
+                if (chosenCalendar.active) {
+                    dispatch(setScrollToY({scrollToY: window.pageYOffset}));
+                    window.location.reload();
+                }
+                else {
+                    setIsPopUpOpen(false);
+                }
             })
             .catch((err) => {
                 console.log('err', err, err.body);

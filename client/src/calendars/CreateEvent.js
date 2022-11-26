@@ -185,7 +185,7 @@ function CreateEvent() {
         
         if (isDataValid()) {
             let dTo = dateTo;
-            if (category != "arrangement") {
+            if (category != "arrangement" && !allDay) {
                 dTo = moment(dateFrom).add(10, 'minutes');
             }
 

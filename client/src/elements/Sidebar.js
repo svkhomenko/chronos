@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import { ThemeProvider } from '@mui/material/styles';
 import customTheme from '../elements/customTheme';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCalendars, setCurDate, removeCurDate, setRepresentation, setIsDropdownOpen } from '../store/slices/calendarsSlice';
+import { setCalendars, setCurDate, removeCurDate, setRepresentation, setDropdownOpen, removeDropdownOpen, setIsHolidaysActive } from '../store/slices/calendarsSlice';
 import PopUpGetCalendarInfo from "../popups/PopUpGetCalendarInfo";
 
 function Dropdown({ setIsDropdownOpen }) {
@@ -29,6 +29,14 @@ function Dropdown({ setIsDropdownOpen }) {
                 <iconify-icon icon="material-symbols:close" />
             </div>
             <div className='dropdown_header'>Calendars</div>
+            <div className='checkbox_outer calendar_outer'>
+                <input type="checkbox" className="checkbox"
+                        id='national_holidays' name='national_holidays'
+                        checked={curCalendars.isHolidaysActive} onChange={toggleHolidaysActive} />
+                <label htmlFor='national_holidays' className="checkbox_label">
+                    National holidays
+                </label>
+            </div>
             {
                 curCalendars.calendars.map(calendar => (
                     <div key={calendar.id} className='checkbox_outer calendar_outer'>
@@ -61,8 +69,12 @@ function Dropdown({ setIsDropdownOpen }) {
                 }
             })
         }));
-        dispatch(setIsDropdownOpen({ isDropdownOpen: true }))
+        dispatch(setDropdownOpen());
         window.location.reload();
+    }
+
+    function toggleHolidaysActive() {
+        dispatch(setIsHolidaysActive({ isHolidaysActive: !curCalendars.isHolidaysActive }));
     }
 }
 
@@ -77,6 +89,12 @@ function Sidebar() {
         { value: 'month', label: 'Month' },
         { value: 'year', label: 'Year' }
     ];
+
+    useEffect(() => {
+        if (curCalendars.isDropdownOpen) {
+            dispatch(removeDropdownOpen());
+        }
+    }, []);
     
     return (
         <div className='sidebar'>

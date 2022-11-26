@@ -21,9 +21,9 @@ function PopUpGetEventInfo({ curEvent, setCurEvent, setEvents, allEvents, setIsP
         if (isSure) {
             deleteEvent(curEvent.id, curUser,
                 () => {
-                    dispatch(setScrollToY({scrollToY: window.pageYOffset}));
                     dispatch(setMessage({ message: "Event was successfully deleted" }));
-                    window.location.reload();
+                    setEvents(allEvents.filter(event => event.id != curEvent.id));
+                    setIsPopUpOpen(false);
                 }, 
                 () => {
                     dispatch(removeUser());

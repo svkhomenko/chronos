@@ -138,6 +138,11 @@ function UpdateEvent({ curEvent, setIsUpdating }) {
         setDateToMessage('');
         
         if (isDataValid()) {
+            let dTo = dateTo;
+            if (curEvent.category != "arrangement" && !allDay) {
+                dTo = moment(dateFrom).add(10, 'minutes');
+            }
+
             fetch(SERVER_URL + `/api/events/${curEvent.id}}`, {
                 method: 'PATCH',
                 headers: {
@@ -148,7 +153,7 @@ function UpdateEvent({ curEvent, setIsUpdating }) {
                     name,
                     description,
                     dateFrom,
-                    dateTo,
+                    dateTo: dTo,
                     color
                 })
             })

@@ -39,7 +39,7 @@ function Calendar() {
             if (activeCalendar.length == 0) {
                 calendars = data.map(calendar => ({
                     ...calendar,
-                    active: calendar.status == "main"
+                    active: true
                 }));
             }
             else {
@@ -131,7 +131,7 @@ function Calendar() {
                 <Sidebar />
                 {
                     curCalendars.calendars[0] &&
-                    <Month holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                    <Month holidays={getHolidays()} widthTD={widthTD} heightTD={heightTD} />
                 }
             </>);
         case "year":
@@ -139,7 +139,7 @@ function Calendar() {
                 <Sidebar />
                 {
                     curCalendars.calendars[0] &&
-                    <Year holidays={holidays} />
+                    <Year holidays={getHolidays()} />
                 }
             </>);
         default:
@@ -147,7 +147,7 @@ function Calendar() {
                 <Sidebar />
                 {
                     curCalendars.calendars[0] &&
-                    <Week holidays={holidays} widthTD={widthTD} heightTD={heightTD} />
+                    <Week holidays={getHolidays()} widthTD={widthTD} heightTD={heightTD} />
                 }
             </>);
     }
@@ -158,6 +158,13 @@ function Calendar() {
             setWidthTD(td.getBoundingClientRect().width);
             setHeightTD(td.getBoundingClientRect().height);
         }
+    }
+
+    function getHolidays() {
+        if (curCalendars.isHolidaysActive) {
+            return holidays;
+        }
+        return [];
     }
 }
 

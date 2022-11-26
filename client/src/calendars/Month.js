@@ -21,7 +21,7 @@ function RndEvent({ event, styleColor, size, handleDragStop, openEventPopup }) {
                     enableResizing={false}
                     onDragStop={onBoxDragStop}
                     onDragStart={onBoxDragStart} >
-                <div style={{height:'100%'}} onClick={handleClick}> 
+                <div style={{height:'100%'}} onClick={handleClick} onTouchEnd={handleClick}> 
                     {event.name}
                 </div>
             </Rnd>
@@ -216,7 +216,13 @@ function Month({ holidays, widthTD, heightTD }) {
     }
 
     function handleDragStop(e, data) {
-        let td = getTdFromPoint(e.clientX, e.clientY);
+        let x = e.clientX;
+        let y = e.clientY;
+        if (e instanceof TouchEvent) {
+            x = e.changedTouches[0].clientX;
+            y = e.changedTouches[0].clientY;
+        }
+        let td = getTdFromPoint(x, y);
         if (!td) {
             dispatch(setScrollToY({scrollToY: window.pageYOffset}));
             window.location.reload();
@@ -248,9 +254,9 @@ function Month({ holidays, widthTD, heightTD }) {
         }
 
         function getTdFromPoint(x, y) {
-            var elements = [];
-            var display = [];
-            var item = document.elementFromPoint(x, y);
+            let elements = [];
+            let display = [];
+            let item = document.elementFromPoint(x, y);
             while (item && item !== document.body && item !== window && item !== document && item !== document.documentElement) {
                 if (item.tagName == 'TD') {
                     break;
