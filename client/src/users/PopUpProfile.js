@@ -51,12 +51,12 @@ function PopUpProfile({ setIsPopUpOpen }) {
 
     return (
         <>
+            {
+                isPopUpSureOpen &&
+                <PopUpSure text={'Do you want to delete profile?'} setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
+            }
             <div className="popup_background" onClick={() => {setIsPopUpOpen(false)}} />
             <div className="popup_container">
-                {
-                    isPopUpSureOpen &&
-                    <PopUpSure text={'Do you want to delete profile?'} setIsSure={setIsSure} setIsPopUpOpen={setIsPopUpSureOpen} />
-                }
                 {
                     isUpdating
                     ? <UpdateProfile setIsUpdating={setIsUpdating} />
