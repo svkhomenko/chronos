@@ -11,6 +11,7 @@ import { SERVER_URL } from "../const";
 
 function PopUpGetCalendarInfo({ curCalendar, setIsPopUpOpen }) {
     const curUser = useSelector((state) => state.user);
+    const curCalendars = useSelector((state) => state.calendars);
     const dispatch = useDispatch();
 
     const [calendar, setCalendar] = useState(curCalendar);
@@ -38,7 +39,10 @@ function PopUpGetCalendarInfo({ curCalendar, setIsPopUpOpen }) {
                 if (!response.ok) {
                     throw response;
                 }
-
+                
+                dispatch(setCalendars({ 
+                    calendars: curCalendars.calendars.filter(c => c.id != curCalendar.id)
+                }));
                 dispatch(setScrollToY({scrollToY: window.pageYOffset}));
                 dispatch(setMessage({ message: "Calendar was successfully deleted" }));
                 window.location.reload();
