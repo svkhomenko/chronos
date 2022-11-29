@@ -23,9 +23,9 @@ async function createNewCalendar(req, res) {
         const calendar = await Calendar.create({
             name,
             description,
-            arrangement_color: arrangementColor,
-            reminder_color: reminderColor,
-            task_color: taskColor
+            arrangement_color: (arrangementColor ? arrangementColor : undefined),
+            reminder_color: (reminderColor ? reminderColor : undefined),
+            task_color: (taskColor ? taskColor : undefined)
         });
     
         await UserCalendar.create({
