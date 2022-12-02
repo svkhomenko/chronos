@@ -53,6 +53,7 @@ Chronos uses a number of open source projects to work properly:
 - [Express](https://expressjs.com/) - fast node.js network app framework 
 - [MySQL](https://www.mysql.com/) - open-source relational database management system 
 - [Sequelize](https://sequelize.org/) - modern TypeScript and Node.js ORM for Oracle, Postgres, MySQL, MariaDB, SQLite and SQL Server, and more
+- [moment](https://momentjs.com/) - parse, validate, manipulate, and display dates and times in JavaScript
 - [webpack](https://webpack.js.org/) - static module bundler for modern JavaScript applications
 - [Babel](https://babeljs.io/) - a JavaScript compiler
 - [React](https://reactjs.org/) - a JavaScript library for building user interfaces
