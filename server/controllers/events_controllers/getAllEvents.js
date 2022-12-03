@@ -79,6 +79,20 @@ async function getAllEvents(req, res) {
                                 }
                             }
                         ]
+                    },
+                    {
+                        [Op.and]: [
+                            {
+                                date_from: {
+                                    [Op.lte]: parseDate(dateFrom)
+                                }
+                            },
+                            {
+                                date_to: {
+                                    [Op.gte]: parseDate(dateTo)
+                                }
+                            }
+                        ]
                     }
                 ]
             };
