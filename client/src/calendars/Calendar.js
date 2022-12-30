@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setCalendars } from '../store/slices/calendarsSlice';
-import { SERVER_URL } from "../const";
+import { SERVER_URL, API_KEY } from "../const";
 import isoToGcalDescription from "../tools/isoToGcalDescription";
 
 import Sidebar from "../elements/Sidebar";
@@ -77,24 +77,12 @@ function Calendar() {
     }, []);
 
     useEffect(() => {
-        const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
-        const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY = "holiday@group.v.calendar.google.com";
-        const API_KEY = "AIzaSyD3exYUMZ-2Aa1rXAPVTH4SFAqx5iqkdqs";
-        let CALENDAR_REGION = "en.ukrainian";
-
-        fetch('http://ip-api.com/json/')
-        .then(response => {
-            if (!response.ok) {
-                throw response;
-            }
-            return response.json();
-        })
-        .then(data => {
-            CALENDAR_REGION = "en." + isoToGcalDescription[data.countryCode.toLowerCase()];
-        })
-        .then(() => {
-            const url = `${BASE_CALENDAR_URL}/${CALENDAR_REGION}%23${BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY}/events?key=${API_KEY}`
-            fetch(url)
+        if (API_KEY) {
+            const BASE_CALENDAR_URL = "https://www.googleapis.com/calendar/v3/calendars";
+            const BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY = "holiday@group.v.calendar.google.com";
+            let CALENDAR_REGION = "en.ukrainian";
+    
+            fetch('http://ip-api.com/json/')
             .then(response => {
                 if (!response.ok) {
                     throw response;
@@ -102,15 +90,28 @@ function Calendar() {
                 return response.json();
             })
             .then(data => {
-                setHolidays(data.items);
+                CALENDAR_REGION = "en." + isoToGcalDescription[data.countryCode.toLowerCase()];
+            })
+            .then(() => {
+                const url = `${BASE_CALENDAR_URL}/${CALENDAR_REGION}%23${BASE_CALENDAR_ID_FOR_PUBLIC_HOLIDAY}/events?key=${API_KEY}`
+                fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw response;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setHolidays(data.items);
+                })
+                .catch(err => {
+                    console.log("err", err);
+                });
             })
             .catch(err => {
                 console.log("err", err);
             });
-        })
-        .catch(err => {
-            console.log("err", err);
-        });
+        }
     }, []);
 
     useEffect(() => {

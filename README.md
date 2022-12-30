@@ -6,7 +6,7 @@ A service for meetings, tasks or events organization.
 
 1. Clone project 
     ```sh
-    git clone git@gitlab.ucode.world:connect-khpi/connect-fullstack-chronos/skhomenko.git
+    git clone https://github.com/svkhomenko/chronos.git
     ```
 ## Server
 2. In the server folder run
@@ -32,7 +32,8 @@ A service for meetings, tasks or events organization.
     ```sh
     npm install
     ```
-7. Run the client
+7. Update file client/src/const.js with your data (Google Cloud API key)
+8. Run the client
     ```sh
     npm start
     ```
@@ -41,7 +42,7 @@ A service for meetings, tasks or events organization.
     ```sh
     npm run build
     ```  
-8. Go to [http://localhost:8080](http://localhost:8080)
+9. Go to [http://localhost:8080](http://localhost:8080)
 
 *The app has been tested on Windows. Linux may require additional settings*
 

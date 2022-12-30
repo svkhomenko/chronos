@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-// const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     entry: [
@@ -33,10 +32,6 @@ module.exports = {
             "path": false,
             "buffer": require.resolve("buffer/"),
             "assert": false,
-            // "url": false,
-            // "util": false,
-            // "crypto": false,
-            // "process/browser": require.resolve("process/browser")
         } 
     },
     module: {
@@ -66,17 +61,8 @@ module.exports = {
                 name: '/src/images/[name].[ext]'
             }
         },
-        // {
-        //     test: /\.m?js/,
-        //     resolve: {
-        //         fullySpecified: false
-        //     }
-        // }
         ],
     },
-    // target: 'node',
-    // externalsPresets: { node: true },
-    // externals: [nodeExternals(), 'pg', 'sqlite3', 'tedious', 'pg-hstore'],
     plugins: [
         new HtmlWebPackPlugin({
             template: './src/index.html',
